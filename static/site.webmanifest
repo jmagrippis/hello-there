@@ -1,0 +1,31 @@
+{
+	"short_name": "Hello there",
+	"name": "Hello there 👋",
+	"description": "The official app which uses both generative and artificial AI to greet you just like I would 👋 Have a lovely day!",
+	"icons": [
+		{
+			"src": "favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png"
+		},
+		{
+			"src": "favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#ec4899",
+	"background_color": "#1d0f15"
+}
