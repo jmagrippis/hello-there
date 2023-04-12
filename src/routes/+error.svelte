@@ -12,7 +12,9 @@
 		class="flex max-w-prose flex-col items-center gap-2 text-xl lg:gap-4 lg:text-2xl"
 	>
 		{#if message.toLowerCase().includes('not found')}
-			<p>We couldn’t find data for <strong>{$page.url.pathname}</strong>...</p>
+			<p>
+				We couldn’t find a page for <strong>{$page.url.pathname}</strong>...
+			</p>
 		{:else}
 			<p>{message}</p>
 		{/if}
