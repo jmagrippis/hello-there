@@ -51,6 +51,10 @@
 		@apply decoration-emphasis-hover;
 	}
 
+	em {
+		@apply font-extralight;
+	}
+
 	svg {
 		@apply transition-colors;
 	}
@@ -106,7 +110,7 @@
 		--surface-2-color-light: var(--brand-hue) 85% 90%;
 		--surface-3-color-light: var(--emphasis-hue) 76% 80%;
 		--shadow-1-color-light: var(--brand-hue) 10% 10%;
-		--emphasis-color-light: var(--emphasis-hue) 81% 44%;
+		--emphasis-color-light: var(--emphasis-hue) 81% 40%;
 		--emphasis-hover-color-light: var(--emphasis-hue) 78% 55%;
 
 		/* dark */
@@ -116,7 +120,7 @@
 		--surface-2-color-dark: var(--brand-hue) 84% 17%;
 		--surface-3-color-dark: var(--emphasis-hue) 25% 11%;
 		--shadow-1-color-dark: var(--brand-hue) 64% 28%;
-		--emphasis-color-dark: var(--emphasis-hue) 78% 55%;
+		--emphasis-color-dark: var(--emphasis-hue) 78% 60%;
 		--emphasis-hover-color-dark: var(--emphasis-hue) 81% 44%;
 	}
 
