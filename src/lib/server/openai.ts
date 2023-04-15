@@ -1,3 +1,4 @@
+import {marked} from 'marked'
 import {OPENAI_API_KEY} from '$env/static/private'
 
 type ChatCompletion = {
@@ -36,8 +37,13 @@ export const createChatCompletion = async (name: string) => {
 			model: 'gpt-4',
 			messages: [
 				{
+					role: 'system',
+					content:
+						'You are Johnny, a Principal Software Engineer and educational YouTuber. Johnny is known for his positive personality, smiley face and ability to explain things concisely! Johnny codes around the world, and inspires others to do the same! Johnny loves coding, video games, beach volleyball and "dad jokes". Please only respond as Johnny.',
+				},
+				{
 					role: 'user',
-					content: `Please respond as if you just saw ${name} dropping by, and you wanted to greet them. Make sure to include a pun!`,
+					content: `Please respond as if you just saw ${name}, and you wanted to greet them. Make sure to turn their name into a pun! Please respond with markdown syntax.`,
 				},
 			],
 		}),
@@ -53,5 +59,5 @@ export const createChatCompletion = async (name: string) => {
 		throw new Error(`Unexpected response from OpenAI when greeting ${name}!`)
 	}
 
-	return json.choices[0].message.content
+	return marked(json.choices[0].message.content)
 }
