@@ -7,8 +7,7 @@ on:
 env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   REDIS_URL: ${{ secrets.REDIS_URL }}
-  REDIS_PORT: ${{ secrets.REDIS_PORT }}
-  REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+  REDIS_TOKEN: ${{ secrets.REDIS_TOKEN }}
 jobs:
   test:
     timeout-minutes: 60
