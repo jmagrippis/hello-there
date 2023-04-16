@@ -6,7 +6,7 @@ const redis = new Redis({
 	token: REDIS_TOKEN,
 })
 
-export const getGreeting = (name: string) => redis.get(name)
+export const getGreeting = (name: string) => redis.get<string>(name)
 
 export const setGreeting = (name: string, value: string) =>
 	redis.set(name, value)
