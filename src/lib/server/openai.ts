@@ -59,5 +59,5 @@ export const createChatCompletion = async (name: string) => {
 		throw new Error(`Unexpected response from OpenAI when greeting ${name}!`)
 	}
 
-	return marked(json.choices[0].message.content)
+	return json.choices[0].message.content
 }
