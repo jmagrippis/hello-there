@@ -16,6 +16,8 @@ Greet your friends using generative AI!
 
 Johnny often livestreams development over at [YouTube](https://www.youtube.com/@jmagrippis)
 
+Check out [the video tutorial specifically about this project](https://www.youtube.com/watch?v=Uw5GZg96kD8)!
+
 ## Running locally
 
 To run this project locally, you will need your own `.env` file, filled with the correct environment variables. You can use the `.env.example` file as a template!

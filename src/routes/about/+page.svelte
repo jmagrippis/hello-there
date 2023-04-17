@@ -17,6 +17,13 @@
 			> for long livestreams and short videos of how this was made!
 		</p>
 		<p>
+			If you watch one thing, <a
+				href="https://www.youtube.com/watch?v=Uw5GZg96kD8"
+				target="_blank"
+				rel="noopener noreferrer">make it this video tutorial</a
+			>! Edited & streamlined, for your convenience 🙌
+		</p>
+		<p>
 			The source code is also open source and free <a
 				href="https://github.com/jmagrippis/hello-there"
 				target="_blank"

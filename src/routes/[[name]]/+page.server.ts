@@ -7,6 +7,7 @@ import {isBlocklisted} from '$lib/server/isBlocklisted'
 import type {PageServerLoad} from './$types'
 
 const FIVE_MINUTES_IN_SECONDS = 60 * 5
+const ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 export const load = (async ({params, setHeaders}) => {
 	const {name = 'World'} = params
@@ -25,17 +26,31 @@ export const load = (async ({params, setHeaders}) => {
 		})
 	}
 
-	let markdownGreeting: string | null
-	markdownGreeting = await getGreeting(name)
+	setHeaders({
+		'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+	})
+	const meta = {title: `Hello there, ${name} 👋`}
 
-	if (!markdownGreeting) {
-		markdownGreeting = await createChatCompletion(name)
-		await setGreeting(name, markdownGreeting)
+	const dbGreeting = await getGreeting(name)
+	if (dbGreeting) {
+		return {
+			meta,
+			dbGreeting: marked(dbGreeting),
+			streamed: {aiGreeting: null},
+		}
 	}
 
-	setHeaders({
-		'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}`,
-	})
+	const aiGreetingPromise = createChatCompletion(name).then(
+		async (aiGreeting) => {
+			await setGreeting(name, aiGreeting)
 
-	return {greeting: marked(markdownGreeting)}
+			return marked(aiGreeting)
+		}
+	)
+
+	return {
+		meta,
+		dbGreeting: null,
+		streamed: {aiGreeting: aiGreetingPromise},
+	}
 }) satisfies PageServerLoad
