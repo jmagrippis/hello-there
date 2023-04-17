@@ -25,17 +25,22 @@ export const load = (async ({params, setHeaders}) => {
 		})
 	}
 
-	let markdownGreeting: string | null
-	markdownGreeting = await getGreeting(name)
-
-	if (!markdownGreeting) {
-		markdownGreeting = await createChatCompletion(name)
-		await setGreeting(name, markdownGreeting)
-	}
-
 	setHeaders({
 		'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}`,
 	})
 
-	return {greeting: marked(markdownGreeting)}
+	const dbGreeting = await getGreeting(name)
+	if (dbGreeting) {
+		return {dbGreeting: marked(dbGreeting), streamed: {aiGreeting: null}}
+	}
+
+	const aiGreetingPromise = createChatCompletion(name).then(
+		async (aiGreeting) => {
+			await setGreeting(name, aiGreeting)
+
+			return marked(aiGreeting)
+		}
+	)
+
+	return {dbGreeting: null, streamed: {aiGreeting: aiGreetingPromise}}
 }) satisfies PageServerLoad
