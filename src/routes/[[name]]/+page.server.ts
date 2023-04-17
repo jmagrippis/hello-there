@@ -7,6 +7,7 @@ import {isBlocklisted} from '$lib/server/isBlocklisted'
 import type {PageServerLoad} from './$types'
 
 const FIVE_MINUTES_IN_SECONDS = 60 * 5
+const ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 export const load = (async ({params, setHeaders}) => {
 	const {name = 'World'} = params
@@ -26,7 +27,7 @@ export const load = (async ({params, setHeaders}) => {
 	}
 
 	setHeaders({
-		'cache-control': `max-age=${FIVE_MINUTES_IN_SECONDS}`,
+		'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
 	})
 
 	const dbGreeting = await getGreeting(name)
