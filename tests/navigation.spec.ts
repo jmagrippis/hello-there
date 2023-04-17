@@ -16,4 +16,8 @@ test('navigation smoke test', async ({page}) => {
 		page.getByRole('heading', {level: 1, name: /About/i})
 	).toBeInViewport()
 	await expect(page).toHaveTitle(/About/)
+
+	// navigate to a specific name
+	await page.goto('/ChatGPT')
+	await expect(page).toHaveTitle(/Hello there, ChatGPT/i)
 })

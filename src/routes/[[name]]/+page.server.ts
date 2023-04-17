@@ -29,10 +29,15 @@ export const load = (async ({params, setHeaders}) => {
 	setHeaders({
 		'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
 	})
+	const meta = {title: `Hello there, ${name} 👋`}
 
 	const dbGreeting = await getGreeting(name)
 	if (dbGreeting) {
-		return {dbGreeting: marked(dbGreeting), streamed: {aiGreeting: null}}
+		return {
+			meta,
+			dbGreeting: marked(dbGreeting),
+			streamed: {aiGreeting: null},
+		}
 	}
 
 	const aiGreetingPromise = createChatCompletion(name).then(
@@ -43,5 +48,9 @@ export const load = (async ({params, setHeaders}) => {
 		}
 	)
 
-	return {dbGreeting: null, streamed: {aiGreeting: aiGreetingPromise}}
+	return {
+		meta,
+		dbGreeting: null,
+		streamed: {aiGreeting: aiGreetingPromise},
+	}
 }) satisfies PageServerLoad
