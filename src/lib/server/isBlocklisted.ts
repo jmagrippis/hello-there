@@ -1,6 +1,4 @@
-const blocklist: Record<string, string> = {
-	'.env': 'someone is trying to steal our secrets 😡',
-	'wp-login.php': 'someone trying to hack our wordpress site 😡',
-}
+const FILE_EXTENSION_OR_PROFANITY_REGEX = /(\.\w+$|fuck)/gi
 
-export const isBlocklisted = (name: string): boolean => !!blocklist[name]
+export const isBlocklisted = (name: string): boolean =>
+	FILE_EXTENSION_OR_PROFANITY_REGEX.test(name)
