@@ -9,7 +9,7 @@ import type {PageServerLoad} from './$types'
 const FIVE_MINUTES_IN_SECONDS = 60 * 5
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-export const load = (async ({params, setHeaders}) => {
+export const load = (async ({params, url, setHeaders}) => {
 	const {name = 'World'} = params
 
 	if (isBlocklisted(name)) {
@@ -29,7 +29,16 @@ export const load = (async ({params, setHeaders}) => {
 	setHeaders({
 		'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
 	})
-	const meta = {title: `Hello there, ${name} 👋`}
+
+	const ogImageUrl = `${url.origin}/api/og?name=${name}`
+	const metaTitle = `Hello there, ${name} 👋`
+	const meta = {
+		title: metaTitle,
+		image: {
+			url: ogImageUrl,
+			alt: metaTitle,
+		},
+	}
 
 	let greeting: null | string | Promise<string> = null
 
