@@ -31,26 +31,22 @@ export const load = (async ({params, setHeaders}) => {
 	})
 	const meta = {title: `Hello there, ${name} 👋`}
 
-	const dbGreeting = await getGreeting(name)
-	if (dbGreeting) {
-		return {
-			meta,
-			dbGreeting: marked(dbGreeting),
-			streamed: {aiGreeting: null},
-		}
-	}
+	let greeting: null | string | Promise<string> = null
 
-	const aiGreetingPromise = createChatCompletion(name).then(
-		async (aiGreeting) => {
+	greeting = await getGreeting(name).then((dbGreeting) =>
+		dbGreeting ? marked(dbGreeting) : null
+	)
+
+	if (!greeting) {
+		greeting = createChatCompletion(name).then(async (aiGreeting) => {
 			await setGreeting(name, aiGreeting)
 
 			return marked(aiGreeting)
-		}
-	)
+		})
+	}
 
 	return {
 		meta,
-		dbGreeting: null,
-		streamed: {aiGreeting: aiGreetingPromise},
+		streamed: {greeting},
 	}
 }) satisfies PageServerLoad
