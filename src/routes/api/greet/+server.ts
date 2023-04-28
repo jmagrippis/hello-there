@@ -11,7 +11,6 @@ export const POST = (async ({request}) => {
 
 	const stream = new ReadableStream({
 		async start(controller) {
-			let streaming = true
 			let partialResponse = ''
 
 			const response = await createStreamingChatCompletion(
@@ -32,14 +31,16 @@ export const POST = (async ({request}) => {
 				.pipeThrough(new TextDecoderStream())
 				.getReader()
 
-			while (streaming) {
+			while (true) {
 				const {value, done} = await reader.read()
-				streaming = !done
+				if (done) break
 				if (!value) continue
 
-				try {
-					const [, ...jsonStrings] = value.split('data: ')
-					jsonStrings.forEach((jsonString) => {
+				const [, ...jsonStrings] = value.split('data: ')
+				jsonStrings.forEach((jsonString) => {
+					if (jsonString === '[DONE]') return
+
+					try {
 						const json = JSON.parse(jsonString)
 						if (
 							!isStreamingChatCompletion(json) ||
@@ -49,15 +50,16 @@ export const POST = (async ({request}) => {
 
 						partialResponse += json.choices[0].delta.content
 						controller.enqueue(json.choices[0].delta.content)
-					})
-				} catch {
-					// sometimes we may try to parse something that
-					// ain't JSON, but that's fine. Relevant data
-					// should always be parse-able as JSON.
-				}
+					} catch {
+						// sometimes we may try to parse something that
+						// ain't JSON, but that's fine. Relevant data
+						// should always be parse-able as JSON.
+					}
+				})
 			}
 
 			await setGreeting(name, partialResponse)
+
 			controller.close()
 		},
 		cancel() {
