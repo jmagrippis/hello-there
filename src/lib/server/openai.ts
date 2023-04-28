@@ -1,33 +1,31 @@
-import {marked} from 'marked'
 import {OPENAI_API_KEY} from '$env/static/private'
 
-type ChatCompletion = {
+export type StreamingChatCompletion = {
 	id: string
 	object: string
 	created: number
+	model: string
 	choices: [
 		{
+			delta: {content?: string; role: 'assistant'}
 			index: number
-			message: {
-				role: string
-				content: string
-			}
-			finish_reason: string
+			finish_reason: null | string
 		}
 	]
-	usage: {
-		prompt_tokens: number
-		completion_tokens: number
-		total_tokens: number
-	}
 }
 
-const isChatCompletion = (data: unknown): data is ChatCompletion =>
+export const isStreamingChatCompletion = (
+	data: unknown
+): data is StreamingChatCompletion =>
 	typeof data === 'object' &&
-	!!(data as ChatCompletion).choices?.[0].message?.content
+	typeof (data as StreamingChatCompletion).choices?.[0].delta === 'object'
 
-export const createChatCompletion = async (name: string) => {
-	const response = await fetch('https://api.openai.com/v1/chat/completions', {
+export const createStreamingChatCompletion = async (
+	name: string,
+	signal: AbortSignal | null = null
+) =>
+	fetch('https://api.openai.com/v1/chat/completions', {
+		signal,
 		method: 'POST',
 		headers: new Headers({
 			'Content-Type': 'application/json',
@@ -35,6 +33,7 @@ export const createChatCompletion = async (name: string) => {
 		}),
 		body: JSON.stringify({
 			model: 'gpt-4',
+			stream: true,
 			messages: [
 				{
 					role: 'system',
@@ -48,16 +47,3 @@ export const createChatCompletion = async (name: string) => {
 			],
 		}),
 	})
-
-	if (!response.ok) {
-		throw new Error(`Could not ask OpenAI to greet ${name}!`)
-	}
-
-	const json = await response.json()
-
-	if (!isChatCompletion(json)) {
-		throw new Error(`Unexpected response from OpenAI when greeting ${name}!`)
-	}
-
-	return json.choices[0].message.content
-}

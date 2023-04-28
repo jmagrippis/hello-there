@@ -1,8 +1,7 @@
 import {error} from '@sveltejs/kit'
 import {marked} from 'marked'
 
-import {createChatCompletion} from '$lib/server/openai'
-import {getGreeting, setGreeting} from '$lib/server/redis'
+import {getGreeting} from '$lib/server/redis'
 import {isBlocklisted} from '$lib/server/isBlocklisted'
 import type {PageServerLoad} from './$types'
 
@@ -26,10 +25,6 @@ export const load = (async ({params, url, setHeaders}) => {
 		})
 	}
 
-	setHeaders({
-		'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
-	})
-
 	const ogImageUrl = `${url.origin}/api/og?name=${name}`
 	const metaTitle = `Hello there, ${name} 👋`
 	const meta = {
@@ -40,22 +35,20 @@ export const load = (async ({params, url, setHeaders}) => {
 		},
 	}
 
-	let greeting: null | string | Promise<string> = null
+	const dbGreeting = await getGreeting(name).then((greeting) => {
+		if (greeting) {
+			setHeaders({
+				'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+			})
+			return marked(greeting)
+		}
 
-	greeting = await getGreeting(name).then((dbGreeting) =>
-		dbGreeting ? marked(dbGreeting) : null
-	)
-
-	if (!greeting) {
-		greeting = createChatCompletion(name).then(async (aiGreeting) => {
-			await setGreeting(name, aiGreeting)
-
-			return marked(aiGreeting)
-		})
-	}
+		return null
+	})
 
 	return {
 		meta,
-		streamed: {greeting},
+		name,
+		dbGreeting,
 	}
 }) satisfies PageServerLoad
