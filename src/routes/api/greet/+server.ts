@@ -5,7 +5,7 @@ import {
 import {setGreeting} from '$lib/server/redis'
 import type {RequestHandler} from './$types'
 
-export const POST = (async ({request, setHeaders}) => {
+export const POST = (async ({request}) => {
 	const {name = 'World'} = await request.json()
 	const abortController = new AbortController()
 
@@ -65,12 +65,12 @@ export const POST = (async ({request, setHeaders}) => {
 		},
 	})
 
-	setHeaders({
-		Connection: 'keep-alive',
-		'Content-Type': 'text/plain',
-		'Cache-Control': 'no-cache, must-revalidate',
-		'Transfer-Encoding': 'chunked',
+	return new Response(stream, {
+		headers: new Headers({
+			Connection: 'keep-alive',
+			'Content-Type': 'text/plain',
+			'Cache-Control': 'no-cache, must-revalidate',
+			'Transfer-Encoding': 'chunked',
+		}),
 	})
-
-	return new Response(stream)
 }) satisfies RequestHandler
