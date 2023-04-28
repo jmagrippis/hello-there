@@ -4,7 +4,7 @@
 
 	export let data
 
-	let cursor = true
+	let cursor = false
 	let streamedGreeting = ''
 	$: greeting = data.dbGreeting || marked(streamedGreeting)
 
