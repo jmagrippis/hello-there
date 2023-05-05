@@ -3,13 +3,13 @@
 	import '@fontsource/noto-color-emoji/emoji.css'
 
 	import '../app.css'
-	import type {LayoutServerData} from './$types'
 	import {browser} from '$app/environment'
 	import {page} from '$app/stores'
 	import Header from '$lib/components/Header/Header.svelte'
 	import Footer from '$lib/components/Footer/Footer.svelte'
 	import {theme} from '$lib/stores/theme'
-	export let data: LayoutServerData
+
+	export let data
 
 	$: title = $page.data.meta?.title ?? data.defaultMeta.title
 	$: description = $page.data.meta?.description ?? data.defaultMeta.description

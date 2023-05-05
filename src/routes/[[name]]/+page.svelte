@@ -1,21 +1,15 @@
 <script lang="ts">
-	import type {PageData} from './$types'
-
-	export let data: PageData
+	export let data
 </script>
 
 <div
 	class="container flex grow flex-col items-center justify-center gap-8 px-2 py-8 text-3xl font-light"
 >
-	{#if data.dbGreeting}
-		{@html data.dbGreeting}
-	{:else}
-		{#await data.streamed.aiGreeting}
-			<p class="animate-pulse text-8xl">👋</p>
-		{:then greeting}
-			{@html greeting}
-		{/await}
-	{/if}
+	{#await data.streamed.greeting}
+		<p class="animate-pulse text-8xl">👋</p>
+	{:then greeting}
+		{@html greeting}
+	{/await}
 </div>
 
 <style lang="postcss">

@@ -1,4 +1,3 @@
-import {marked} from 'marked'
 import {OPENAI_API_KEY} from '$env/static/private'
 
 type ChatCompletion = {

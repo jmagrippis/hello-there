@@ -14,9 +14,11 @@
 		"github.vscode-github-actions",
 		"mikestead.dotenv",
 		"ms-playwright.playwright",
-		"ms-vsliveshare.vsliveshare",
 		"stylelint.vscode-stylelint",
-		"svelte.svelte-vscode"
+		"svelte.svelte-vscode",
+		"unifiedjs.vscode-mdx",
+		"wix.vscode-import-cost",
+		"yoavbls.pretty-ts-errors"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": []
