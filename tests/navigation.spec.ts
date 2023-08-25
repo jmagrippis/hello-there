@@ -5,7 +5,7 @@ test('navigation smoke test', async ({page}) => {
 	await page.goto('/')
 
 	await expect(
-		page.getByRole('heading', {level: 1, name: /Hello there/i})
+		page.getByRole('heading', {level: 1, name: /Hello there/i}),
 	).toHaveText('👋')
 	await expect(page).toHaveTitle(/Hello there/i)
 
@@ -13,7 +13,7 @@ test('navigation smoke test', async ({page}) => {
 	await page.getByRole('link', {name: /About/i}).click()
 
 	await expect(
-		page.getByRole('heading', {level: 1, name: /About/i})
+		page.getByRole('heading', {level: 1, name: /About/i}),
 	).toBeInViewport()
 	await expect(page).toHaveTitle(/About/)
 

@@ -12,7 +12,7 @@ type ChatCompletion = {
 				content: string
 			}
 			finish_reason: string
-		}
+		},
 	]
 	usage: {
 		prompt_tokens: number

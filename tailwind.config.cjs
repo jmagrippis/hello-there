@@ -36,7 +36,7 @@ module.exports = {
 			center: true,
 		},
 		fontFamily: {
-			cursive: ['GrandstanderVariable', 'cursive', '"Noto Color Emoji"'],
+			cursive: ['"Grandstander Variable"', 'cursive', '"Noto Color Emoji"'],
 		},
 		extend: {},
 	},

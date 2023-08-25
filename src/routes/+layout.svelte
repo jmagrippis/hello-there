@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '@fontsource/grandstander/variable.css'
+	import '@fontsource-variable/grandstander'
 	import '@fontsource/noto-color-emoji/emoji.css'
 
 	import '../app.css'
