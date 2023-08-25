@@ -1,15 +1,15 @@
 import {error} from '@sveltejs/kit'
-import {marked} from 'marked'
 
-import {createChatCompletion} from '$lib/server/openai'
 import {getGreeting, setGreeting} from '$lib/server/redis'
 import {isBlocklisted} from '$lib/server/isBlocklisted'
+import {createChatCompletion} from '$lib/server/openai'
 import type {PageServerLoad} from './$types'
+import {parseMarkdown} from '$lib/parseMarkdown'
 
 const FIVE_MINUTES_IN_SECONDS = 60 * 5
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-export const load = (async ({params, setHeaders}) => {
+export const load = (async ({params, url, setHeaders}) => {
 	const {name = 'World'} = params
 
 	if (isBlocklisted(name)) {
@@ -26,31 +26,39 @@ export const load = (async ({params, setHeaders}) => {
 		})
 	}
 
-	setHeaders({
-		'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
-	})
-	const meta = {title: `Hello there, ${name} 👋`}
-
-	const dbGreeting = await getGreeting(name)
-	if (dbGreeting) {
-		return {
-			meta,
-			dbGreeting: marked(dbGreeting),
-			streamed: {aiGreeting: null},
-		}
+	const ogImageUrl = `${url.origin}/api/og?name=${name}`
+	const metaTitle = `Hello there, ${name} 👋`
+	const meta = {
+		title: metaTitle,
+		image: {
+			url: ogImageUrl,
+			alt: metaTitle,
+		},
 	}
 
-	const aiGreetingPromise = createChatCompletion(name).then(
-		async (aiGreeting) => {
-			await setGreeting(name, aiGreeting)
+	let greeting: null | string | Promise<string> = null
 
-			return marked(aiGreeting)
+	greeting = await getGreeting(name).then((greeting) => {
+		if (greeting) {
+			setHeaders({
+				'Cache-Control': `s-maxage=${FIVE_MINUTES_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+			})
+			return parseMarkdown(greeting)
 		}
-	)
+
+		return null
+	})
+
+	if (!greeting) {
+		greeting = createChatCompletion(name).then(async (aiGreeting) => {
+			setGreeting(name, aiGreeting)
+
+			return parseMarkdown(aiGreeting)
+		})
+	}
 
 	return {
 		meta,
-		dbGreeting: null,
-		streamed: {aiGreeting: aiGreetingPromise},
+		streamed: {greeting},
 	}
 }) satisfies PageServerLoad
