@@ -16,10 +16,10 @@ export const GET = (async ({fetch, url, setHeaders}) => {
 	const name = url.searchParams.get('name') ?? 'World'
 
 	const grandstanderData = await fetch('/fonts/Grandstander-Regular.ttf').then(
-		(res) => res.arrayBuffer()
+		(res) => res.arrayBuffer(),
 	)
 	const notoEmojiData = await fetch('/fonts/NotoEmoji-Regular.ttf').then(
-		(res) => res.arrayBuffer()
+		(res) => res.arrayBuffer(),
 	)
 
 	const svg = await satori(
@@ -107,7 +107,7 @@ export const GET = (async ({fetch, url, setHeaders}) => {
 				{name: 'Grandstander', data: grandstanderData},
 				{name: 'Noto Emoji', data: notoEmojiData},
 			],
-		}
+		},
 	)
 
 	setHeaders({
