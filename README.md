@@ -13,7 +13,7 @@ Visit `/<their name>` and Johnny greets them with a pun on their name. The first
 - [Claude](https://platform.claude.com/docs/en/about-claude/models/overview) via the [Anthropic TypeScript SDK](https://github.com/anthropics/anthropic-sdk-typescript#readme)
 - [Tailwind CSS v4](https://tailwindcss.com)
 - [Vite+](https://viteplus.dev/guide) for dev, build, test, lint and format
-- [Takumi](https://takumi.kane.tw/docs/) to render the open-graph card at build time
+- [Takumi](https://takumi.kane.tw/docs/) to render each name's open-graph card
 
 ## Related video content
 
@@ -27,7 +27,7 @@ You need the Node and pnpm versions in `mise.toml` (`mise install` sorts both ou
 
 ```sh
 pnpm install
-cp .dev.vars.example .dev.vars # then paste in your Anthropic API key
+cp .env.example .env # then fill in your Anthropic API key and admin credentials
 vp dev
 ```
 
@@ -45,6 +45,8 @@ vp run sanity
 
 ```sh
 pnpm wrangler secret put ANTHROPIC_API_KEY
+pnpm wrangler secret put ADMIN_USERNAME
+pnpm wrangler secret put ADMIN_PASSWORD
 pnpm run deploy
 ```
 
