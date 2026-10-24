@@ -15,7 +15,7 @@ test.describe('as the admin', () => {
 		},
 	})
 
-	test('handcrafts a greeting, sees it on the page, then hands the name back to Claude', async ({
+	test('handcrafts a greeting, features it in the random pool, then hands the name back to Claude', async ({
 		page,
 	}) => {
 		const name = `Pw${Date.now().toString(36).slice(-6)}`
@@ -40,6 +40,17 @@ test.describe('as the admin', () => {
 		await page.getByRole('button', {name: 'Search'}).click()
 		await expect(page.getByRole('row').nth(1)).toContainText(name)
 
+		const poolToggle = page.getByRole('button', {name: `Show ${name} in random greetings`})
+		await expect(poolToggle).toHaveAttribute('aria-pressed', 'false')
+		await poolToggle.click()
+		await expect(poolToggle).toHaveAttribute('aria-pressed', 'true')
+
+		await page.goto('/')
+		await expect(page.getByTestId('hydrated')).toBeVisible()
+		await page.getByRole('link', {name: 'See another greeting →'}).click()
+		await expect(page).toHaveURL((url) => !['/', '/random'].includes(url.pathname))
+		await expect(page).toHaveTitle(/^Hello there, .+ 👋$/)
+
 		await page.goto(`/${name}`)
 		await expect(page.getByText('play-maker', {exact: true})).toBeVisible()
 
@@ -47,5 +58,12 @@ test.describe('as the admin', () => {
 		await page.getByRole('button', {name: 'Delete'}).click()
 		await expect(page).toHaveURL(/\/admin$/)
 		await expect(page.getByRole('link', {name, exact: true})).toHaveCount(0)
+
+		const randomRedirects = await Promise.all(
+			Array.from({length: 20}, () => page.request.get('/random?not=World', {maxRedirects: 0})),
+		)
+		for (const redirect of randomRedirects) {
+			expect(redirect.headers()['location']).not.toBe(`/${name}`)
+		}
 	})
 })

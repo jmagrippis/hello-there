@@ -2,6 +2,8 @@ import {env, waitUntil} from 'cloudflare:workers'
 
 const KEY_PREFIX = 'greeting:'
 const PREVIEW_LENGTH = 100
+// one key holding every approved name, so a random pick costs a single cached read
+const RANDOM_POOL_KEY = 'random-pool'
 
 export type GreetingMetadata = {
 	createdAt: number
@@ -40,7 +42,26 @@ export const saveEditedGreeting = async (name: string, greeting: string) => {
 	})
 }
 
-export const deleteGreeting = (name: string) => env.GREETINGS.delete(keyFor(name))
+export const getRandomPool = async () =>
+	(await env.GREETINGS.get<string[]>(RANDOM_POOL_KEY, 'json')) ?? []
+
+// only names with a stored greeting may join, or a random pick could make Claude write an unvetted one
+export const setInRandomPool = async (name: string, included: boolean) => {
+	const pool = new Set(await getRandomPool())
+
+	if (included && (await getGreeting(name)) !== null) {
+		pool.add(name)
+	} else {
+		pool.delete(name)
+	}
+
+	await env.GREETINGS.put(RANDOM_POOL_KEY, JSON.stringify([...pool].toSorted()))
+}
+
+export const deleteGreeting = async (name: string) => {
+	await setInRandomPool(name, false)
+	await env.GREETINGS.delete(keyFor(name))
+}
 
 export const listGreetings = async () => {
 	const greetings: GreetingSummary[] = []

@@ -1,7 +1,12 @@
 <script lang="ts">
+	import {enhance} from '$app/forms'
+
 	import type {PageProps} from './$types'
 
 	let {data}: PageProps = $props()
+
+	// keeps the search and sort when toggling without JavaScript, which reloads the page
+	let poolAction = $derived(`?${new URLSearchParams({q: data.query, sort: data.sort})}&/pool`)
 
 	const dateFormat = new Intl.DateTimeFormat('en-GB', {dateStyle: 'medium', timeZone: 'UTC'})
 </script>
@@ -47,17 +52,37 @@
 					<th class="py-2 pr-4">Name</th>
 					<th class="py-2 pr-4">Greeting</th>
 					<th class="py-2 pr-4">Created</th>
-					<th class="py-2">Edited</th>
+					<th class="py-2 pr-4">Edited</th>
+					<th class="py-2">Random pool</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each data.greetings as { name, preview, createdAt, editedAt } (name)}
+				{#each data.greetings as { name, preview, createdAt, editedAt, inRandomPool } (name)}
 					<tr class="border-t border-copy-base/20 align-top">
 						<td class="py-2 pr-4"><a href="/admin/{encodeURIComponent(name)}">{name}</a></td>
 						<td class="py-2 pr-4 font-light">{preview}</td>
 						<td class="py-2 pr-4 whitespace-nowrap">{@render date(createdAt)}</td>
-						<td class="py-2 whitespace-nowrap">
+						<td class="py-2 pr-4 whitespace-nowrap">
 							{#if editedAt}{@render date(editedAt)}{:else}—{/if}
+						</td>
+						<td class="py-2">
+							<form method="POST" action={poolAction} use:enhance>
+								<input type="hidden" name="name" value={name} />
+								<button
+									name="include"
+									value={String(!inRandomPool)}
+									aria-pressed={inRandomPool}
+									aria-label="Show {name} in random greetings"
+									class={[
+										'rounded px-3 py-1',
+										inRandomPool
+											? 'bg-copy-base text-surface-1'
+											: 'bg-surface-2 hover:text-emphasis-hover',
+									]}
+								>
+									{inRandomPool ? 'Yes' : 'No'}
+								</button>
+							</form>
 						</td>
 					</tr>
 				{/each}

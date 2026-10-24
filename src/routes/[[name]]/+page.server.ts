@@ -2,7 +2,7 @@ import {env} from 'cloudflare:workers'
 
 import {DEFAULT_NAME, ogImagePath} from '#lib/meta'
 import {createGreeting} from '#lib/server/claude'
-import {getGreeting, storeGeneratedGreeting} from '#lib/server/greetings'
+import {getGreeting, getRandomPool, storeGeneratedGreeting} from '#lib/server/greetings'
 import {assertGreetable} from '#lib/server/name'
 
 import type {PageServerLoad} from './$types'
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({params, getClientAddress}) => {
 	const {name = DEFAULT_NAME} = params
 	assertGreetable(name)
 
-	const storedGreeting = await getGreeting(name)
+	const [storedGreeting, randomPool] = await Promise.all([getGreeting(name), getRandomPool()])
 
 	return {
 		meta: {
@@ -37,6 +37,8 @@ export const load: PageServerLoad = async ({params, getClientAddress}) => {
 			description: `A personalised, pun-filled greeting for ${name}, written just the way Johnny would say it 👋`,
 			image: ogImagePath(name),
 		},
+		name,
+		hasAnotherGreeting: randomPool.some((pooledName) => pooledName !== name),
 		greeting: storedGreeting ?? generateGreeting(name, getClientAddress()),
 	}
 }

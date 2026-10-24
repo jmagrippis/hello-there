@@ -21,4 +21,13 @@
 			<p>Johnny is lost for words right now 😅 Give it another go in a bit!</p>
 		{/if}
 	{/await}
+
+	{#if data.hasAnotherGreeting}
+		<p class="text-xl">
+			<!-- a real navigation, or the client router would render `/random` as a greeting for "random" -->
+			<a href="/random?not={encodeURIComponent(data.name)}" data-sveltekit-reload>
+				See another greeting →
+			</a>
+		</p>
+	{/if}
 </div>
