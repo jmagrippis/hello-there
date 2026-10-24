@@ -222,7 +222,7 @@ importers:
         specifier: ^26.6.5
         version: 26.6.5
       '@typescript/native':
-        specifier: npm:typescript@latest
+        specifier: npm:typescript@^7.0.2
         version: typescript@7.0.2
       mode-watcher:
         specifier: ^1.1.0

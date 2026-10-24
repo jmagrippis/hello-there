@@ -1,14 +1,14 @@
-import {env, waitUntil} from 'cloudflare:workers'
+import {env} from 'cloudflare:workers'
 
 import {DEFAULT_NAME, ogImagePath} from '#lib/meta'
-import {createGreeting, greetingKey} from '#lib/server/claude'
-import {toParagraphs} from '#lib/server/greeting'
+import {createGreeting} from '#lib/server/claude'
+import {getGreeting, storeGeneratedGreeting} from '#lib/server/greetings'
 import {assertGreetable} from '#lib/server/name'
 
 import type {PageServerLoad} from './$types'
 
 // a rejection streamed to the browser lands before hydration can handle it, so failures resolve to null
-const generateGreeting = async (name: string, key: string, clientAddress: string) => {
+const generateGreeting = async (name: string, clientAddress: string) => {
 	try {
 		const {success} = await env.GREETING_LIMITER.limit({key: clientAddress})
 		if (!success) {
@@ -16,9 +16,9 @@ const generateGreeting = async (name: string, key: string, clientAddress: string
 		}
 
 		const greeting = await createGreeting(name)
-		waitUntil(env.GREETINGS.put(key, greeting))
+		storeGeneratedGreeting(name, greeting)
 
-		return toParagraphs(greeting)
+		return greeting
 	} catch (error) {
 		console.error(`Could not greet ${name}`, error)
 		return null
@@ -29,8 +29,7 @@ export const load: PageServerLoad = async ({params, getClientAddress}) => {
 	const {name = DEFAULT_NAME} = params
 	assertGreetable(name)
 
-	const key = await greetingKey(name)
-	const storedGreeting = await env.GREETINGS.get(key)
+	const storedGreeting = await getGreeting(name)
 
 	return {
 		meta: {
@@ -38,8 +37,6 @@ export const load: PageServerLoad = async ({params, getClientAddress}) => {
 			description: `A personalised, pun-filled greeting for ${name}, written just the way Johnny would say it 👋`,
 			image: ogImagePath(name),
 		},
-		greeting: storedGreeting
-			? toParagraphs(storedGreeting)
-			: generateGreeting(name, key, getClientAddress()),
+		greeting: storedGreeting ?? generateGreeting(name, getClientAddress()),
 	}
 }

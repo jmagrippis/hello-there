@@ -1,4 +1,12 @@
+import {existsSync} from 'node:fs'
+
 import {defineConfig, devices} from '@playwright/test'
+
+// the same `.env` wrangler serves the app with, so the admin specs log in with matching credentials
+const envFile = new URL('../.env', import.meta.url)
+if (existsSync(envFile)) {
+	process.loadEnvFile(envFile)
+}
 
 export default defineConfig({
 	testDir: './e2e',

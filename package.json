@@ -25,7 +25,7 @@
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^26.6.5",
-		"@typescript/native": "npm:typescript@latest",
+		"@typescript/native": "npm:typescript@^7.0.2",
 		"mode-watcher": "^1.1.0",
 		"svelte": "^5.57.2",
 		"svelte-check": "^4.7.7",
