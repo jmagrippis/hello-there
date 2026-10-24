@@ -5,8 +5,6 @@ import {FileSystemIconLoader} from 'unplugin-icons/loaders'
 import Icons from 'unplugin-icons/vite'
 import {defineConfig, lazyPlugins} from 'vite-plus'
 
-import {ogImages} from './scripts/ogImagesPlugin'
-
 export default defineConfig({
 	lint: {
 		options: {typeAware: true, typeCheck: true},
@@ -22,10 +20,8 @@ export default defineConfig({
 			},
 			playwright: {
 				command: 'playwright test --config tests/playwright.config.ts',
-				cache: {
-					input: [{auto: true}, '!test-results/**', '!.svelte-kit/**', '!.wrangler/**'],
-					env: ['PUBLIC_ROOT_URL', 'CI'],
-				},
+				// a run writes to its own inputs, so it would never hit the cache anyway
+				cache: false,
 			},
 		},
 	},
@@ -49,11 +45,9 @@ export default defineConfig({
 	},
 	plugins: lazyPlugins(() => [
 		tailwindcss(),
-		ogImages(),
 		sveltekit({
 			adapter: adapter(),
-			compilerOptions: {runes: true, experimental: {async: true}},
-			experimental: {remoteFunctions: true},
+			compilerOptions: {runes: true},
 		}),
 		Icons({
 			compiler: 'svelte',

@@ -1,31 +1,18 @@
 <script lang="ts">
 	import {page} from '$app/state'
-	import {MediaQuery} from 'svelte/reactivity'
+	import {setMode, setTheme, theme} from 'mode-watcher'
 	import IconYouTube from '~icons/brand/youtube'
-
-	import type {Theme} from '#lib/theme'
-	import {setTheme} from '#lib/theme.remote'
 
 	import ThemeToggleIcon from './ThemeToggleIcon.svelte'
 
-	const prefersDark = new MediaQuery('prefers-color-scheme: dark', false)
-
 	let logoTag = $derived(page.url.pathname === '/' ? 'h1' : 'div')
-	let theme = $derived(page.data.theme)
-	let nextTheme: Theme = $derived.by(() => {
-		switch (theme) {
-			case 'dark':
-				return 'light'
-			case 'light':
-				return 'dark'
-			case 'auto':
-				return prefersDark.current ? 'light' : 'dark'
-		}
-	})
 
-	$effect(() => {
-		document.documentElement.dataset.theme = theme
-	})
+	const toggleTheme = () => {
+		const nextTheme = theme.current === 'dark' ? 'light' : 'dark'
+
+		setTheme(nextTheme)
+		setMode(nextTheme)
+	}
 </script>
 
 <header class="relative z-10 bg-surface-2">
@@ -43,24 +30,9 @@
 			>
 				<IconYouTube class="w-7 hover:text-emphasis-hover" />
 			</a>
-			<form
-				{...setTheme.enhance(async ({submit}) => {
-					document.documentElement.dataset.theme = nextTheme
-					try {
-						await submit()
-					} catch {
-						document.documentElement.dataset.theme = theme
-					}
-				})}
-			>
-				<button
-					{...setTheme.fields.theme.as('submit', nextTheme)}
-					class="w-8"
-					aria-label={`Switch to the ${nextTheme} theme`}
-				>
-					<ThemeToggleIcon />
-				</button>
-			</form>
+			<button class="w-8" onclick={toggleTheme} aria-label="toggle light/dark theme">
+				<ThemeToggleIcon class="w-full hover:text-emphasis-hover" />
+			</button>
 		</nav>
 	</div>
 </header>

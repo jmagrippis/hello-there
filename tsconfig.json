@@ -1,9 +1,9 @@
 {
 	"extends": "$app/tsconfig",
-	"include": ["src", "scripts", "worker-configuration.d.ts", "*.ts"],
+	"include": ["src", "worker-configuration.d.ts", "*.ts"],
 	"compilerOptions": {
 		// mirrors the package.json `imports`: TypeScript resolves those without
-		// extension substitution, so `#lib/theme` would need the full `.ts`
+		// extension substitution, so `#lib/meta` would need the full `.ts`
 		"paths": {
 			"#lib/*": ["./src/lib/*"]
 		},

@@ -1,4 +1,10 @@
-<svg class="w-full hover:text-emphasis-hover" aria-hidden="true" viewBox="0 0 24 24">
+<script lang="ts">
+	import type {SVGAttributes} from 'svelte/elements'
+
+	let restProps: SVGAttributes<EventTarget> = $props()
+</script>
+
+<svg aria-hidden="true" viewBox="0 0 24 24" {...restProps}>
 	<mask class="moon" id="moon-mask">
 		<rect x="0" y="0" width="100%" height="100%" fill="white" />
 		<circle cx="24" cy="10" r="6" fill="black" />
@@ -17,6 +23,13 @@
 </svg>
 
 <style>
+	/* Based on Adam's GUI Challenges!
+	Thinking on ways to solve a Dark/Light Theme Switch:
+	https://web.dev/shows/gui-challenges/kZiS1QStIWc */
+	svg {
+		--duration: var(--transition-duration-long);
+	}
+
 	svg .moon,
 	svg .sun,
 	svg .sun-beams {
@@ -33,10 +46,8 @@
 
 	:global([data-theme='dark']) svg .moon > circle {
 		transform: translateX(-7px);
-	}
 
-	@supports (cx: 1) {
-		:global([data-theme='dark']) svg .moon > circle {
+		@supports (cx: 1) {
 			transform: translateX(0);
 			cx: 17;
 		}
@@ -44,76 +55,37 @@
 
 	@media (prefers-reduced-motion: no-preference) {
 		svg .sun {
-			transition: transform var(--transition-duration-long) var(--ease-elastic-3);
+			transition: transform var(--duration) var(--ease-elastic-3);
 		}
 
 		svg .sun-beams {
 			transition:
-				transform var(--transition-duration-long) var(--ease-elastic-4),
-				opacity var(--transition-duration-long) var(--ease-3);
+				transform var(--duration) var(--ease-elastic-4),
+				opacity var(--duration) var(--ease-3);
 		}
 
 		svg .moon > circle {
-			transition: transform calc(var(--transition-duration-long) / 2) var(--ease-out-5);
-		}
+			transition: transform calc(var(--duration) / 2) var(--ease-out-5);
 
-		@supports (cx: 1) {
-			svg .moon > circle {
-				transition: cx calc(var(--transition-duration-long) / 2) var(--ease-out-5);
+			@supports (cx: 1) {
+				transition: cx calc(var(--duration) / 2) var(--ease-out-5);
 			}
 		}
 
 		:global([data-theme='dark']) svg .sun {
 			transform: scale(1.75);
 			transition-timing-function: var(--ease-3);
-			transition-duration: calc(var(--transition-duration-long) / 2);
+			transition-duration: calc(var(--duration) / 2);
 		}
 
 		:global([data-theme='dark']) svg .sun-beams {
 			transform: rotateZ(-25deg);
-			transition-duration: calc(var(--transition-duration-long) / 3);
+			transition-duration: calc(var(--duration) / 3);
 		}
 
 		:global([data-theme='dark']) svg .moon > circle {
-			transition-delay: calc(var(--transition-duration-long) / 2);
-			transition-duration: var(--transition-duration-long);
-		}
-
-		@media (prefers-color-scheme: dark) {
-			:global([data-theme='auto']) svg .sun {
-				transform: scale(1.75);
-			}
-
-			:global([data-theme='auto']) svg .sun-beams {
-				opacity: 0;
-			}
-
-			:global([data-theme='auto']) svg .moon > circle {
-				transform: translateX(-7px);
-			}
-
-			@supports (cx: 1) {
-				:global([data-theme='auto']) svg .moon > circle {
-					transform: translateX(0);
-					cx: 17;
-				}
-			}
-
-			:global([data-theme='auto']) svg .sun {
-				transform: scale(1.75);
-				transition-timing-function: var(--ease-3);
-				transition-duration: calc(var(--transition-duration-long) / 2);
-			}
-
-			:global([data-theme='auto']) svg .sun-beams {
-				transform: rotateZ(-25deg);
-				transition-duration: calc(var(--transition-duration-long) / 3);
-			}
-
-			:global([data-theme='auto']) svg .moon > circle {
-				transition-delay: calc(var(--transition-duration-long) / 2);
-				transition-duration: var(--transition-duration-long);
-			}
+			transition-delay: calc(var(--duration) / 2);
+			transition-duration: var(--duration);
 		}
 	}
 </style>

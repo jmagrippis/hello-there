@@ -1,48 +1,45 @@
-import {error} from '@sveltejs/kit'
+import {env, waitUntil} from 'cloudflare:workers'
 
-import {createGreeting} from '#lib/server/claude'
-import {getStoredGreeting, storeGreeting} from '#lib/server/greetings'
-import {isBlocklisted} from '#lib/server/isBlocklisted'
-import {parseMarkdown} from '#lib/server/markdown'
+import {DEFAULT_NAME, ogImagePath} from '#lib/meta'
+import {createGreeting, greetingKey} from '#lib/server/claude'
+import {toParagraphs} from '#lib/server/greeting'
+import {assertGreetable} from '#lib/server/name'
 
 import type {PageServerLoad} from './$types'
 
-const MAX_NAME_LENGTH = 16
-
 // a rejection streamed to the browser lands before hydration can handle it, so failures resolve to null
-const generateGreeting = async (name: string) => {
+const generateGreeting = async (name: string, key: string, clientAddress: string) => {
 	try {
-		const greeting = await createGreeting(name)
-		storeGreeting(name, greeting)
+		const {success} = await env.GREETING_LIMITER.limit({key: clientAddress})
+		if (!success) {
+			return null
+		}
 
-		return parseMarkdown(greeting)
+		const greeting = await createGreeting(name)
+		waitUntil(env.GREETINGS.put(key, greeting))
+
+		return toParagraphs(greeting)
 	} catch (error) {
 		console.error(`Could not greet ${name}`, error)
 		return null
 	}
 }
 
-export const load: PageServerLoad = async ({params}) => {
-	const {name = 'World'} = params
+export const load: PageServerLoad = async ({params, getClientAddress}) => {
+	const {name = DEFAULT_NAME} = params
+	assertGreetable(name)
 
-	if (isBlocklisted(name)) {
-		error(400, 'We don’t think that’s your name, we think you’re being naughty 😡')
-	}
-
-	if (name.length > MAX_NAME_LENGTH) {
-		error(
-			400,
-			'Listen, we wanna be inclusive, but that name is so long you may be trying to be naughty 🤔',
-		)
-	}
-
-	const storedGreeting = await getStoredGreeting(name)
+	const key = await greetingKey(name)
+	const storedGreeting = await env.GREETINGS.get(key)
 
 	return {
 		meta: {
 			title: `Hello there, ${name} 👋`,
 			description: `A personalised, pun-filled greeting for ${name}, written just the way Johnny would say it 👋`,
+			image: ogImagePath(name),
 		},
-		greeting: storedGreeting ? parseMarkdown(storedGreeting) : generateGreeting(name),
+		greeting: storedGreeting
+			? toParagraphs(storedGreeting)
+			: generateGreeting(name, key, getClientAddress()),
 	}
 }

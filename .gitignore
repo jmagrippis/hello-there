@@ -5,9 +5,6 @@ node_modules
 .svelte-kit/
 .vite-hooks/_/
 
-# generated open-graph images
-static/og/
-
 # cloudflare / wrangler
 .wrangler/
 # `wrangler types` writes this on install and before every check

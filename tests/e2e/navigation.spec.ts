@@ -17,10 +17,13 @@ test('a visitor gets greeted, reads about the app, then greets a friend', async 
 	await page.goto('/Claude')
 	await expect(page.getByTestId('hydrated')).toBeVisible()
 	await expect(page).toHaveTitle('Hello there, Claude 👋')
-	await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
-		'content',
-		/\/og\/hello-there\.png$/,
-	)
+
+	const ogImageUrl = await page.locator('meta[property="og:image"]').getAttribute('content')
+	expect(ogImageUrl).toMatch(/\/og\/Claude\.png$/)
+
+	const ogImage = await page.request.get(ogImageUrl ?? '')
+	expect(ogImage.ok()).toBe(true)
+	expect(ogImage.headers()['content-type']).toBe('image/png')
 })
 
 test('naughty names get turned away before anyone asks Claude', async ({page}) => {
@@ -28,5 +31,8 @@ test('naughty names get turned away before anyone asks Claude', async ({page}) =
 		const response = await page.goto(`/${name}`)
 		expect(response?.status()).toBe(400)
 		await expect(page.getByRole('heading', {level: 1, name: 'We’ve had an error 😱'})).toBeVisible()
+
+		const ogImage = await page.request.get(`/og/${name}.png`)
+		expect(ogImage.status()).toBe(400)
 	}
 })
