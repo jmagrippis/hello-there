@@ -1,22 +1,12 @@
-import type {Handle} from '@sveltejs/kit'
+import type {Handle} from '@sveltejs/kit/hooks'
 
-import {isValidTheme} from '$lib/stores/theme'
+import {isTheme, THEME_COOKIE} from '#lib/theme'
 
 export const handle: Handle = async ({event, resolve}) => {
-	const theme = event.cookies.get('theme') ?? 'auto'
-	if (isValidTheme(theme)) {
-		event.locals.theme = theme
-	}
+	const theme = event.cookies.get(THEME_COOKIE)
+	event.locals.theme = isTheme(theme) ? theme : 'auto'
 
 	return resolve(event, {
-		transformPageChunk: ({html}) => html.replace('%THEME%', theme),
-		/**
-		 * There´s an issue with `filterSerializedResponseHeaders` not working when using `sequence`
-		 *
-		 * https://github.com/sveltejs/kit/issues/8061
-		 */
-		filterSerializedResponseHeaders(name) {
-			return name === 'content-range'
-		},
+		transformPageChunk: ({html}) => html.replace('%THEME%', event.locals.theme),
 	})
 }

@@ -2,12 +2,12 @@
 	<h1 class="my-4 text-4xl">About</h1>
 	<div class="flex max-w-prose flex-col gap-2 text-xl lg:gap-4 lg:text-2xl">
 		<p>
-			We created <strong>Hello There 👋</strong> to inspire creators look deeper
-			into generative AI!
+			We created <strong>Hello There 👋</strong> to inspire creators look deeper into generative AI!
 		</p>
 		<p>
-			Generative AI and language models like ChatGPT are so hot right now, but
-			they do not need to be <strong>too</strong> hot for you to handle 😄
+			Generative AI and language models like Claude are so hot right now, but they do not need to be <strong
+				>too</strong
+			> hot for you to handle 😄
 		</p>
 		<p>
 			Check out <a
@@ -31,8 +31,7 @@
 			> 👀
 		</p>
 		<p>
-			<strong>You too</strong> can do cool stuff, and maybe it all starts with a
-			little web app 😉
+			<strong>You too</strong> can do cool stuff, and maybe it all starts with a little web app 😉
 		</p>
 	</div>
 </section>

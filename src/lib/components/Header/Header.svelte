@@ -1,63 +1,63 @@
 <script lang="ts">
-	import {browser} from '$app/environment'
-	import {applyAction, enhance} from '$app/forms'
-	import {page} from '$app/stores'
+	import {page} from '$app/state'
+	import {MediaQuery} from 'svelte/reactivity'
+	import IconYouTube from '~icons/brand/youtube'
+
+	import type {Theme} from '#lib/theme'
+	import {setTheme} from '#lib/theme.remote'
 
 	import ThemeToggleIcon from './ThemeToggleIcon.svelte'
-	import YouTubeIcon from '$lib/icons/youtube.svg?component'
-	import {theme, type Theme} from '$lib/stores/theme'
 
-	$: logoTag = $page.url.pathname === '/' ? 'h1' : 'div'
+	const prefersDark = new MediaQuery('prefers-color-scheme: dark', false)
 
-	const deriveNextTheme = (theme: Theme): Theme => {
+	let logoTag = $derived(page.url.pathname === '/' ? 'h1' : 'div')
+	let theme = $derived(page.data.theme)
+	let nextTheme: Theme = $derived.by(() => {
 		switch (theme) {
 			case 'dark':
 				return 'light'
 			case 'light':
 				return 'dark'
 			case 'auto':
-			default:
-				if (!browser) return 'auto'
-				return window.matchMedia('(prefers-color-scheme: dark)').matches
-					? 'light'
-					: 'dark'
+				return prefersDark.current ? 'light' : 'dark'
 		}
-	}
-	$: nextTheme = deriveNextTheme($theme)
+	})
+
+	$effect(() => {
+		document.documentElement.dataset.theme = theme
+	})
 </script>
 
 <header class="relative z-10 bg-surface-2">
 	<div class="container flex items-center justify-between px-2 py-4">
-		<svelte:element this={logoTag}
-			><a href="/" class="text-2xl no-underline" aria-label="Hello there">👋</a
-			></svelte:element
-		>
+		<svelte:element this={logoTag}>
+			<a href="/" class="text-2xl no-underline" aria-label="Hello there">👋</a>
+		</svelte:element>
 		<nav class="flex items-center gap-4">
 			<a href="/about">About</a>
 			<a
 				href="https://www.youtube.com/@jmagrippis"
 				target="_blank"
 				rel="noopener noreferrer"
-				aria-label="YouTube"
+				aria-label="Johnny’s YouTube channel"
 			>
-				<YouTubeIcon
-					title="Johnny’s YouTube channel"
-					class="w-7 hover:text-emphasis-hover"
-				/>
+				<IconYouTube class="w-7 hover:text-emphasis-hover" />
 			</a>
 			<form
-				method="POST"
-				action="/theme"
-				use:enhance={async () => {
-					$theme = nextTheme
-
-					return async ({result}) => {
-						await applyAction(result)
+				{...setTheme.enhance(async ({submit}) => {
+					document.documentElement.dataset.theme = nextTheme
+					try {
+						await submit()
+					} catch {
+						document.documentElement.dataset.theme = theme
 					}
-				}}
+				})}
 			>
-				<input name="theme" value={nextTheme} hidden />
-				<button class="w-8">
+				<button
+					{...setTheme.fields.theme.as('submit', nextTheme)}
+					class="w-8"
+					aria-label={`Switch to the ${nextTheme} theme`}
+				>
 					<ThemeToggleIcon />
 				</button>
 			</form>

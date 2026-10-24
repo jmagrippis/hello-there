@@ -1,17 +1,31 @@
-.DS_Store
+# dependencies
 node_modules
-/build
-/.svelte-kit
-/package
+
+# svelte / vite
+.svelte-kit/
+.vite-hooks/_/
+
+# generated open-graph images
+static/og/
+
+# cloudflare / wrangler
+.wrangler/
+# `wrangler types` writes this on install and before every check
+worker-configuration.d.ts
+
+# misc
+.DS_Store
+*.tsbuildinfo
+
+# local env files
 .env
 .env.*
-!.env.example
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-# Vercel build artifacts
-.vercel/output
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 
-# Playwright e2e test artifacts
-/test-results/
-/playwright-report/
-/playwright/.cache/
+# playwright
+test-results/
+playwright-report/
+playwright/.cache/
+.playwright-mcp/

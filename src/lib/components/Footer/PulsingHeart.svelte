@@ -1,8 +1,9 @@
 <script lang="ts">
-	import HeartIcon from './heart.svg?component'
+	import IconHeart from '~icons/brand/heart'
 </script>
 
 <div>
-	<HeartIcon class="absolute w-6 fill-primary-400 hover:animate-ping" />
-	<HeartIcon class="w-6 fill-primary-500" />
+	<IconHeart aria-hidden="true" class="absolute w-6 fill-primary-400 hover:animate-ping" />
+	<IconHeart aria-hidden="true" class="w-6 fill-primary-500" />
+	<span class="sr-only">love</span>
 </div>

@@ -1,5 +1,6 @@
-import {it, expect} from 'vitest'
-import crypto from 'crypto'
+import crypto from 'node:crypto'
+
+import {expect, it} from 'vite-plus/test'
 
 import {isBlocklisted} from './isBlocklisted'
 
@@ -30,4 +31,11 @@ it('allows names with dots', () => {
 it('blocks names that are likely profanity', () => {
 	// I don't like committing this but it's needed 🙄
 	expect(isBlocklisted('Meet the Fuckers')).toBe(true)
+})
+
+it('keeps blocking the same name on every request a long-lived isolate serves', () => {
+	expect(isBlocklisted('Meet the Fuckers')).toBe(true)
+	expect(isBlocklisted('Meet the Fuckers')).toBe(true)
+	expect(isBlocklisted('.env')).toBe(true)
+	expect(isBlocklisted('.env')).toBe(true)
 })

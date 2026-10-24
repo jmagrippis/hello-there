@@ -1,0 +1,47 @@
+name: Quality Assurance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  sanity-check:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: .node-version
+          cache: true
+      - name: Build the Worker
+        run: vp build
+      - name: Code quality check (format, lint, type check)
+        run: vp check
+      - name: Type check with svelte-check
+        run: vp run check
+      - name: Run Vitest tests
+        run: vp test
+  browser-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: .node-version
+          cache: true
+      - name: Build the Worker
+        run: vp build
+      - name: Install Playwright Browsers
+        run: vp exec playwright install --with-deps
+      - name: Run Playwright tests
+        run: vp run playwright
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 30
