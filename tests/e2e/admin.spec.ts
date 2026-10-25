@@ -51,10 +51,10 @@ test.describe('as the admin', () => {
 		await page.getByRole('link', {name: '← All greetings'}).click()
 		await expect(page.getByRole('link', {name, exact: true})).toBeVisible()
 
-		const poolToggle = page.getByRole('button', {name: `Show ${name} in random greetings`})
-		await expect(poolToggle).toHaveAttribute('aria-pressed', 'false')
-		await poolToggle.click()
-		await expect(poolToggle).toHaveAttribute('aria-pressed', 'true')
+		const poolSwitch = page.getByRole('switch', {name: `Show ${name} in random greetings`})
+		await expect(poolSwitch).not.toBeChecked()
+		await poolSwitch.press('Space')
+		await expect(poolSwitch).toBeChecked()
 
 		await page.goto('/')
 		await expect(page.getByTestId('hydrated')).toBeVisible()

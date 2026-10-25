@@ -8,8 +8,8 @@ import grandstander from './fonts/Grandstander-Regular.ttf'
 import notoEmoji from './fonts/NotoEmoji-Regular.ttf'
 
 // mirrors the dark palette in `src/app.css`
-const SURFACE_COLOR = 'hsl(330deg 90% 6%)'
-const COPY_COLOR = 'hsl(330deg 100% 97%)'
+const BACKGROUND_COLOR = 'hsl(330deg 90% 6%)'
+const FOREGROUND_COLOR = 'hsl(330deg 100% 97%)'
 const EMPHASIS_COLOR = 'hsl(158deg 78% 60%)'
 
 const card = (name: string) =>
@@ -21,8 +21,8 @@ const card = (name: string) =>
 			width: '100%',
 			height: '100%',
 			padding: '64px',
-			backgroundColor: SURFACE_COLOR,
-			color: COPY_COLOR,
+			backgroundColor: BACKGROUND_COLOR,
+			color: FOREGROUND_COLOR,
 			fontFamily: "Grandstander, 'Noto Emoji'",
 			fontSize: '64px',
 		},

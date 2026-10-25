@@ -4,6 +4,8 @@ export default defineConfig({
 	lint: {
 		options: {typeAware: true, typeCheck: true},
 		rules: {'typescript/no-unused-vars': 'warn'},
+		// shadcn barrels re-export from `.svelte` module scripts, which only svelte-check can see into
+		ignorePatterns: ['**/components/ui/*/index.ts'],
 	},
 	staged: {
 		'*.{js,ts,svelte}': 'vp check --fix',

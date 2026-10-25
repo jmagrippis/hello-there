@@ -2,6 +2,9 @@
 	import {enhance} from '$app/forms'
 
 	import Greeting from '#lib/components/Greeting.svelte'
+	import {Button} from '#lib/components/ui/button'
+	import * as Field from '#lib/components/ui/field'
+	import {Textarea} from '#lib/components/ui/textarea'
 
 	import type {PageProps} from './$types'
 
@@ -17,37 +20,38 @@
 	<form
 		method="POST"
 		action="?/save"
-		class="flex flex-col gap-4 text-lg"
+		class="text-lg"
 		use:enhance={() =>
 			({update}) =>
 				update({reset: false})}
 	>
-		<label class="flex flex-col gap-1">
-			Greeting, with the pun wrapped in **double asterisks**
-			<textarea
-				name="greeting"
-				rows="8"
-				value={draft}
-				oninput={(event) => (draft = event.currentTarget.value)}
-				class="rounded border border-copy-base/30 bg-surface-2 p-2"></textarea>
-		</label>
+		<Field.Group class="gap-4">
+			<Field.Field>
+				<Field.Label for="greeting">
+					Greeting, with the pun wrapped in **double asterisks**
+				</Field.Label>
+				<Textarea
+					id="greeting"
+					name="greeting"
+					rows={8}
+					value={draft}
+					oninput={(event) => (draft = event.currentTarget.value)}
+					class="field-sizing-fixed"
+				/>
+			</Field.Field>
 
-		{#if form?.missing}
-			<p role="alert">A greeting can’t be empty.</p>
-		{:else if form?.saved}
-			<p role="status">Saved ✓</p>
-		{/if}
+			{#if form?.missing}
+				<p role="alert">A greeting can’t be empty.</p>
+			{:else if form?.saved}
+				<p role="status">Saved ✓</p>
+			{/if}
 
-		<div class="flex flex-wrap items-center gap-4">
-			<button class="rounded bg-surface-2 px-4 py-1 hover:text-emphasis-hover">Save</button>
-			<button
-				formaction="?/delete"
-				class="rounded bg-surface-2 px-4 py-1 hover:text-emphasis-hover"
-			>
-				Delete
-			</button>
-			<a href="/{encodeURIComponent(data.name)}">View the page</a>
-		</div>
+			<Field.Field orientation="horizontal">
+				<Button type="submit" variant="secondary">Save</Button>
+				<Button type="submit" variant="secondary" formaction="?/delete">Delete</Button>
+				<a href="/{encodeURIComponent(data.name)}">View the page</a>
+			</Field.Field>
+		</Field.Group>
 	</form>
 
 	<h2 class="mt-8 mb-4 text-2xl">Preview</h2>

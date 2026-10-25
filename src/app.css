@@ -1,15 +1,55 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn-svelte/tailwind.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 @theme inline {
-	--color-copy-base: var(--copy-base-color);
-	--color-surface-1: var(--surface-1-color);
-	--color-surface-2: var(--surface-2-color);
-	--color-emphasis: var(--emphasis-color);
-	--color-emphasis-hover: var(--emphasis-hover-color);
-	--color-primary-400: var(--color-emerald-400);
-	--color-primary-500: var(--color-emerald-500);
+	--font-sans: 'Grandstander Variable', cursive, 'Noto Color Emoji';
 
-	--font-cursive: 'Grandstander Variable', cursive, 'Noto Color Emoji';
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-emphasis: var(--emphasis);
+	--color-emphasis-hover: var(--emphasis-hover);
+	--color-emphasis-400: var(--color-emerald-400);
+	--color-emphasis-500: var(--color-emerald-500);
+
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
 }
 
 @utility container {
@@ -21,17 +61,45 @@
 		--brand-hue: 330deg;
 		--emphasis-hue: 158deg;
 
-		--copy-base-color: light-dark(hsl(var(--brand-hue) 10% 10%), hsl(var(--brand-hue) 100% 97%));
-		--surface-1-color: light-dark(hsl(var(--brand-hue) 73% 97%), hsl(var(--brand-hue) 90% 6%));
-		--surface-2-color: light-dark(hsl(var(--brand-hue) 85% 90%), hsl(var(--brand-hue) 84% 17%));
-		--emphasis-color: light-dark(
-			hsl(var(--emphasis-hue) 81% 40%),
-			hsl(var(--emphasis-hue) 78% 60%)
-		);
-		--emphasis-hover-color: light-dark(
+		--background: light-dark(hsl(var(--brand-hue) 73% 97%), hsl(var(--brand-hue) 90% 6%));
+		--foreground: light-dark(hsl(var(--brand-hue) 10% 10%), hsl(var(--brand-hue) 100% 97%));
+		--card: var(--background);
+		--card-foreground: var(--foreground);
+		--popover: var(--background);
+		--popover-foreground: var(--foreground);
+		--primary: var(--foreground);
+		--primary-foreground: var(--background);
+		--secondary: light-dark(hsl(var(--brand-hue) 85% 90%), hsl(var(--brand-hue) 84% 17%));
+		--secondary-foreground: var(--foreground);
+		--muted: var(--secondary);
+		--muted-foreground: light-dark(var(--color-mauve-500), var(--color-mauve-400));
+		--accent: var(--secondary);
+		--accent-foreground: var(--foreground);
+		--destructive: light-dark(var(--color-rose-600), var(--color-rose-400));
+		--border: color-mix(in oklab, var(--foreground) 20%, transparent);
+		--input: color-mix(in oklab, var(--foreground) 30%, transparent);
+		--ring: var(--emphasis);
+		--chart-1: var(--color-emerald-300);
+		--chart-2: var(--color-emerald-500);
+		--chart-3: var(--color-emerald-600);
+		--chart-4: var(--color-emerald-700);
+		--chart-5: var(--color-emerald-800);
+		--sidebar: var(--background);
+		--sidebar-foreground: var(--foreground);
+		--sidebar-primary: var(--primary);
+		--sidebar-primary-foreground: var(--primary-foreground);
+		--sidebar-accent: var(--accent);
+		--sidebar-accent-foreground: var(--accent-foreground);
+		--sidebar-border: var(--border);
+		--sidebar-ring: var(--ring);
+		--emphasis: light-dark(hsl(var(--emphasis-hue) 81% 40%), hsl(var(--emphasis-hue) 78% 60%));
+		--emphasis-hover: light-dark(
 			hsl(var(--emphasis-hue) 78% 55%),
 			hsl(var(--emphasis-hue) 81% 44%)
 		);
+
+		/* `rounded-md`, the controls' radius, lands on 0.25rem */
+		--radius: 0.3125rem;
 
 		/* easings */
 		--transition-duration-long: 0.4s;
@@ -47,6 +115,10 @@
 		color-scheme: light;
 	}
 
+	* {
+		@apply border-border outline-ring/50;
+	}
+
 	/*
 	  Additional "resets" based on Josh's article:
 	  https://www.joshwcomeau.com/css/custom-css-reset/
@@ -57,7 +129,7 @@
 	}
 
 	html {
-		@apply bg-surface-1 font-cursive text-copy-base transition-colors;
+		@apply bg-background font-sans text-foreground transition-colors;
 	}
 
 	body {

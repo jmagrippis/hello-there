@@ -3,6 +3,8 @@
 	import {setMode, setTheme, theme} from 'mode-watcher'
 	import IconYouTube from '~icons/brand/youtube'
 
+	import {Button} from '#lib/components/ui/button'
+
 	import ThemeToggleIcon from './ThemeToggleIcon.svelte'
 
 	let logoTag = $derived(page.url.pathname === '/' ? 'h1' : 'div')
@@ -15,7 +17,7 @@
 	}
 </script>
 
-<header class="relative z-10 bg-surface-2">
+<header class="relative z-10 bg-muted">
 	<div class="container flex items-center justify-between px-2 py-4">
 		<svelte:element this={logoTag}>
 			<a href="/" class="text-2xl no-underline" aria-label="Hello there">👋</a>
@@ -30,9 +32,14 @@
 			>
 				<IconYouTube class="w-7 hover:text-emphasis-hover" />
 			</a>
-			<button class="w-8" onclick={toggleTheme} aria-label="toggle light/dark theme">
-				<ThemeToggleIcon class="w-full hover:text-emphasis-hover" />
-			</button>
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				onclick={toggleTheme}
+				aria-label="toggle light/dark theme"
+			>
+				<ThemeToggleIcon class="size-8" />
+			</Button>
 		</nav>
 	</div>
 </header>
