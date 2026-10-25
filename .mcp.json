@@ -4,7 +4,7 @@
 			"type": "stdio",
 			"command": "npx",
 			"args": ["-y", "@sveltejs/mcp"],
-			"env": {}
+			"env": {"NODE_USE_ENV_PROXY": "1"}
 		},
 		"playwright": {
 			"type": "stdio",

@@ -48,12 +48,14 @@ export default defineConfig({
 			{default: adapter},
 			{default: Icons},
 			{FileSystemIconLoader},
+			{svelteTesting},
 		] = await Promise.all([
 			import('@tailwindcss/vite'),
 			import('@sveltejs/kit/vite'),
 			import('@sveltejs/adapter-cloudflare'),
 			import('unplugin-icons/vite'),
 			import('unplugin-icons/loaders'),
+			import('@testing-library/svelte/vite'),
 		])
 
 		return [
@@ -68,6 +70,7 @@ export default defineConfig({
 					brand: FileSystemIconLoader('./src/icons'),
 				},
 			}),
+			svelteTesting(),
 		]
 	}),
 	test: {

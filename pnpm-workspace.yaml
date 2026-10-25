@@ -17,3 +17,8 @@ peerDependencyRules:
     - vite
   allowedVersions:
     vite: '*'
+
+updateConfig:
+  ignoreDependencies:
+    # `svelte-kit sync` needs the JS API that TypeScript 7 dropped; `@typescript/native` carries 7
+    - typescript
