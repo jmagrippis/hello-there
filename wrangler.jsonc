@@ -10,7 +10,6 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare",
 	},
-	// no `id`: the first deploy creates the namespace and writes its id back here
 	"kv_namespaces": [
 		{
 			"binding": "GREETINGS",

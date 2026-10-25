@@ -44,10 +44,11 @@ vp run sanity
 ## Deploying
 
 ```sh
+pnpm wrangler kv namespace create hello-there-greetings --binding GREETINGS
 pnpm wrangler secret put ANTHROPIC_API_KEY
 pnpm wrangler secret put ADMIN_USERNAME
 pnpm wrangler secret put ADMIN_PASSWORD
 pnpm run deploy
 ```
 
-The first deploy creates the `GREETINGS` KV namespace and writes its id into `wrangler.jsonc`: commit that change.
+The first command writes the namespace id into `wrangler.jsonc`: run `vp fmt` and commit that change.
