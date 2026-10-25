@@ -2,7 +2,7 @@ import {existsSync} from 'node:fs'
 
 import {defineConfig, devices} from '@playwright/test'
 
-// the same `.env` wrangler serves the app with, so the admin specs log in with matching credentials
+// the admin specs need the credentials wrangler reads from `.env`
 const envFile = new URL('../.env', import.meta.url)
 if (existsSync(envFile)) {
 	process.loadEnvFile(envFile)
@@ -37,7 +37,7 @@ export default defineConfig({
 	],
 	webServer: !process.env.PUBLIC_ROOT_URL
 		? {
-				// the built Worker imports `cloudflare:workers`, so only workerd can serve it
+				// not `vp preview`: the built Worker needs workerd for `cloudflare:workers`
 				command: 'vp run preview',
 				// this config lives in `tests/`, and Playwright resolves cwd relative
 				// to it — without this, the preview runs where there is no app

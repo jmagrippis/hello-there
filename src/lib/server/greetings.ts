@@ -2,7 +2,7 @@ import {env, waitUntil} from 'cloudflare:workers'
 
 const KEY_PREFIX = 'greeting:'
 const PREVIEW_LENGTH = 100
-// one key holding every approved name, so a random pick costs a single cached read
+// one key, so a random pick is a single read rather than a list
 const RANDOM_POOL_KEY = 'random-pool'
 
 export type GreetingMetadata = {
@@ -17,7 +17,7 @@ export type GreetingSummary = GreetingMetadata & {
 
 const keyFor = (name: string) => `${KEY_PREFIX}${name}`
 
-// KV lists hand back metadata without reading values, so the admin table needs no extra reads
+// kept in metadata, which `list()` returns without reading values
 const previewOf = (greeting: string) => Array.from(greeting).slice(0, PREVIEW_LENGTH).join('')
 
 export const getGreeting = (name: string) => env.GREETINGS.get(keyFor(name))
@@ -45,7 +45,7 @@ export const saveEditedGreeting = async (name: string, greeting: string) => {
 export const getRandomPool = async () =>
 	(await env.GREETINGS.get<string[]>(RANDOM_POOL_KEY, 'json')) ?? []
 
-// only names with a stored greeting may join, or a random pick could make Claude write an unvetted one
+// only stored greetings may join, so a random pick never triggers a fresh, unvetted one
 export const setInRandomPool = async (name: string, included: boolean) => {
 	const pool = new Set(await getRandomPool())
 

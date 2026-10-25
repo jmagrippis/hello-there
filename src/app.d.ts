@@ -6,7 +6,7 @@ declare global {
 			meta?: {
 				title: string
 				description: string
-				/** Path of the open-graph card, defaulting to the World greeting's. */
+				/** Open-graph card path, defaulting to the World card. */
 				image?: string
 			}
 		}

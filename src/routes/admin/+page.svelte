@@ -5,7 +5,7 @@
 
 	let {data}: PageProps = $props()
 
-	// keeps the search and sort when toggling without JavaScript, which reloads the page
+	// keeps search and sort across submissions without JavaScript
 	let poolAction = $derived(`?${new URLSearchParams({q: data.query, sort: data.sort})}&/pool`)
 
 	const dateFormat = new Intl.DateTimeFormat('en-GB', {dateStyle: 'medium', timeZone: 'UTC'})

@@ -10,7 +10,7 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare",
 	},
-	// no `id` on purpose: the first `wrangler deploy` creates the namespace and writes its id back here
+	// no `id`: the first deploy creates the namespace and writes its id back here
 	"kv_namespaces": [
 		{
 			"binding": "GREETINGS",
@@ -25,7 +25,7 @@
 			"simple": {"limit": 10, "period": 60},
 		},
 		{
-			// caps admin requests per IP, well above what a person clicking around sends
+			// caps admin requests per IP, against password guessing
 			"name": "ADMIN_LIMITER",
 			"namespace_id": "1002",
 			"simple": {"limit": 60, "period": 60},

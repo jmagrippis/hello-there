@@ -24,7 +24,7 @@
 
 	{#if data.hasAnotherGreeting}
 		<p class="text-xl">
-			<!-- a real navigation, or the client router would render `/random` as a greeting for "random" -->
+			<!-- client-side, `/random` would match `[[name]]` -->
 			<a href="/random?not={encodeURIComponent(data.name)}" data-sveltekit-reload>
 				See another greeting →
 			</a>

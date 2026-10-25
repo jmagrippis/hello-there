@@ -28,7 +28,8 @@
 	)
 
 	$effect(() => {
-		// Playwright waits for this before interacting, so it never races hydration
+		// Add data-testid now that our app is hydrated
+		// We have Playwright "wait" for this before starting any test
 		document.documentElement.dataset.testid = 'hydrated'
 	})
 </script>

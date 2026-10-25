@@ -7,8 +7,7 @@
 		"paths": {
 			"#lib/*": ["./src/lib/*"]
 		},
-		// the source is all TypeScript; this keeps the built Worker that
-		// `wrangler types` links in via `mainModule` out of the type check
+		// `wrangler types` links the built Worker in via `mainModule`; keep its JS out of the type check
 		"checkJs": false,
 		"strict": true,
 		"sourceMap": true,

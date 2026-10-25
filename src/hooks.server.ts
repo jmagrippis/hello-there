@@ -19,7 +19,7 @@ export const handle: Handle = async ({event, resolve}) => {
 		return challenge()
 	}
 
-	// counted before checking, so a correct guess is as rate limited as a wrong one
+	// counted before the check, so correct guesses are throttled too
 	const {success} = await env.ADMIN_LIMITER.limit({key: event.getClientAddress()})
 	if (!success) {
 		return new Response('Too many attempts, try again in a minute ⏳', {status: 429})

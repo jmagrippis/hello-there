@@ -6,7 +6,7 @@ export type Credentials = {
 const digest = async (value: string) =>
 	new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)))
 
-// digests are always 32 bytes and XOR-folded in full, so timing leaks neither length nor content
+// constant-time by hand: `crypto.subtle.timingSafeEqual` is Workers-only, and the tests run in Node
 const isSameSecret = async (given: string, expected: string) => {
 	const [givenDigest, expectedDigest] = await Promise.all([digest(given), digest(expected)])
 

@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
-      # throwaway credentials for the local Worker the tests run against
+      # test-only credentials for the local Worker
       ADMIN_USERNAME: playwright
       ADMIN_PASSWORD: playwright-only-password
     steps:

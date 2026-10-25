@@ -7,7 +7,7 @@ import {OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH} from '#lib/meta'
 import grandstander from './fonts/Grandstander-Regular.ttf'
 import notoEmoji from './fonts/NotoEmoji-Regular.ttf'
 
-// the dark palette from `src/app.css`, since the card has no cascade to read it from
+// mirrors the dark palette in `src/app.css`
 const SURFACE_COLOR = 'hsl(330deg 90% 6%)'
 const COPY_COLOR = 'hsl(330deg 100% 97%)'
 const EMPHASIS_COLOR = 'hsl(158deg 78% 60%)'

@@ -20,7 +20,7 @@ export default defineConfig({
 			},
 			playwright: {
 				command: 'playwright test --config tests/playwright.config.ts',
-				// a run writes to its own inputs, so it would never hit the cache anyway
+				// runs write to their own inputs, so the cache would never hit
 				cache: false,
 			},
 		},

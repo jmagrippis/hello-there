@@ -33,6 +33,7 @@
 			hsl(var(--emphasis-hue) 81% 44%)
 		);
 
+		/* easings */
 		--transition-duration-long: 0.4s;
 		--ease-3: cubic-bezier(0.25, 0, 0.3, 1);
 		--ease-out-5: cubic-bezier(0, 0, 0, 1);
@@ -42,14 +43,14 @@
 		color-scheme: dark;
 	}
 
-	/*
-		mode-watcher also sets `color-scheme` inline, but the build compiles `light-dark()` into
-		variables that only flip on stylesheet `color-scheme` declarations, so this rule is load-bearing
-	*/
 	[data-theme='light'] {
 		color-scheme: light;
 	}
 
+	/*
+	  Additional "resets" based on Josh's article:
+	  https://www.joshwcomeau.com/css/custom-css-reset/
+	*/
 	html,
 	body {
 		height: 100%;

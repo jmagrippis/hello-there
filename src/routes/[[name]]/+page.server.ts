@@ -7,7 +7,7 @@ import {assertGreetable} from '#lib/server/name'
 
 import type {PageServerLoad} from './$types'
 
-// a rejection streamed to the browser lands before hydration can handle it, so failures resolve to null
+// streamed rejections reach the browser before hydration can catch them, so failures resolve to null
 const generateGreeting = async (name: string, clientAddress: string) => {
 	try {
 		const {success} = await env.GREETING_LIMITER.limit({key: clientAddress})

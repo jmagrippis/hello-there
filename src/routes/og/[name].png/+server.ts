@@ -7,7 +7,6 @@ import type {RequestHandler} from './$types'
 
 const headers = {'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400'}
 
-// drawing a card costs real CPU time, so each name is drawn once and kept in KV
 export const GET: RequestHandler = async ({params}) => {
 	const {name} = params
 	assertGreetable(name)
