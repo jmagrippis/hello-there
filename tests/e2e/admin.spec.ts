@@ -58,7 +58,7 @@ test.describe('as the admin', () => {
 
 		await page.goto('/')
 		await expect(page.getByTestId('hydrated')).toBeVisible()
-		await page.getByRole('link', {name: 'See another greeting →'}).click()
+		await page.getByRole('link', {name: /another greeting/}).click()
 		await expect(page).toHaveURL((url) => !['/', '/random'].includes(url.pathname))
 		await expect(page).toHaveTitle(/^Hello there, .+ 👋$/)
 

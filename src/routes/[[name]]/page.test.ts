@@ -1,14 +1,16 @@
-import {render} from 'svelte/server'
+// @vitest-environment jsdom
+import {render, screen} from '@testing-library/svelte'
 import {expect, it} from 'vite-plus/test'
 
 import {ogImagePath} from '#lib/meta'
 
-import type {PageData} from './$types'
 import Page from './+page.svelte'
 
 const NAME = 'Zarina'
+const PUN = 'Zarina-ding'
 
-const renderGreeting = (greeting: PageData['greeting']) =>
+it('offers a different greeting only once this one has landed', async () => {
+	const greeting = Promise.withResolvers<string | null>()
 	render(Page, {
 		props: {
 			params: {name: NAME},
@@ -21,17 +23,19 @@ const renderGreeting = (greeting: PageData['greeting']) =>
 				},
 				name: NAME,
 				hasAnotherGreeting: true,
-				greeting,
+				greeting: greeting.promise,
 			},
 		},
-	}).body
+	})
 
-it('only offers another greeting once Johnny has finished thinking of this one', () => {
-	const thinking = renderGreeting(new Promise<string | null>(() => {}))
-	expect(thinking).toContain('Johnny is thinking of a greeting…')
-	expect(thinking).not.toContain('See another greeting →')
+	expect(screen.queryByRole('progressbar')).not.toBeNull()
+	expect(screen.queryByRole('link', {name: /another greeting/})).toBeNull()
 
-	const greeted = renderGreeting(`Hey **${NAME}**, how’s it going?`)
-	expect(greeted).toContain('how’s it going?')
-	expect(greeted).toContain('See another greeting →')
+	greeting.resolve(`Hey **${PUN}**!`)
+
+	const anotherGreeting = await screen.findByRole('link', {name: /another greeting/})
+	const destination = new URL(anotherGreeting.getAttribute('href') ?? '', 'http://localhost')
+	expect(destination.searchParams.get('not')).toBe(NAME)
+	expect(screen.queryByText(PUN)).not.toBeNull()
+	expect(screen.queryByRole('progressbar')).toBeNull()
 })
