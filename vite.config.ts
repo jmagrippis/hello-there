@@ -1,8 +1,3 @@
-import adapter from '@sveltejs/adapter-cloudflare'
-import {sveltekit} from '@sveltejs/kit/vite'
-import tailwindcss from '@tailwindcss/vite'
-import {FileSystemIconLoader} from 'unplugin-icons/loaders'
-import Icons from 'unplugin-icons/vite'
 import {defineConfig, lazyPlugins} from 'vite-plus'
 
 export default defineConfig({
@@ -43,19 +38,36 @@ export default defineConfig({
 			'worker-configuration.d.ts',
 		],
 	},
-	plugins: lazyPlugins(() => [
-		tailwindcss(),
-		sveltekit({
-			adapter: adapter(),
-			compilerOptions: {runes: true},
-		}),
-		Icons({
-			compiler: 'svelte',
-			customCollections: {
-				brand: FileSystemIconLoader('./src/icons'),
-			},
-		}),
-	]),
+	// imported inside the callback, so `vp lint` and `vp fmt` never load them
+	plugins: lazyPlugins(async () => {
+		const [
+			{default: tailwindcss},
+			{sveltekit},
+			{default: adapter},
+			{default: Icons},
+			{FileSystemIconLoader},
+		] = await Promise.all([
+			import('@tailwindcss/vite'),
+			import('@sveltejs/kit/vite'),
+			import('@sveltejs/adapter-cloudflare'),
+			import('unplugin-icons/vite'),
+			import('unplugin-icons/loaders'),
+		])
+
+		return [
+			tailwindcss(),
+			sveltekit({
+				adapter: adapter(),
+				compilerOptions: {runes: true},
+			}),
+			Icons({
+				compiler: 'svelte',
+				customCollections: {
+					brand: FileSystemIconLoader('./src/icons'),
+				},
+			}),
+		]
+	}),
 	test: {
 		include: ['src/**/*.test.ts'],
 		mockReset: true,
