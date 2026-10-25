@@ -5,7 +5,8 @@
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 @theme inline {
-	--font-sans: 'Grandstander Variable', cursive, 'Noto Color Emoji';
+	/* Safari can't paint the Noto webfont's COLRv1/SVG glyphs, so Apple devices must claim emoji first */
+	--font-sans: 'Grandstander Variable', cursive, 'Apple Color Emoji', 'Noto Color Emoji';
 
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
