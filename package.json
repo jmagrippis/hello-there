@@ -10,7 +10,7 @@
 		"prepare": "vp config && svelte-kit sync && wrangler types",
 		"dev": "vp dev",
 		"build": "vp build",
-		"preview": "wrangler dev --port 5173",
+		"preview": "wrangler dev --port 4173",
 		"check": "wrangler types && svelte-kit sync && rm -rf .svelte-kit/.svelte-check && svelte-check --tsconfig ./tsconfig.json --tsgo",
 		"test": "vp test",
 		"deploy": "vp build && wrangler deploy"
