@@ -1,0 +1,51 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "hello-there",
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"compatibility_date": "2026-10-22",
+	"compatibility_flags": ["nodejs_als"],
+	"workers_dev": true,
+	"routes": [{"pattern": "hellothere.cat", "custom_domain": true}],
+	"preview_urls": false,
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare",
+	},
+	"kv_namespaces": [
+		{
+			"binding": "KV",
+			"id": "a9578c08d61046b48dc6243db63ea99d",
+		},
+	],
+	// any account-unique integer works as a `namespace_id`
+	"ratelimits": [
+		{
+			// caps paid Claude calls per visitor IP
+			"name": "GREETING_LIMITER",
+			"namespace_id": "1001",
+			"simple": {
+				"limit": 10,
+				"period": 60,
+			},
+		},
+		{
+			// caps admin requests per IP, against password guessing
+			"name": "ADMIN_LIMITER",
+			"namespace_id": "1002",
+			"simple": {
+				"limit": 60,
+				"period": 60,
+			},
+		},
+	],
+	"secrets": {
+		"required": ["ANTHROPIC_API_KEY", "ADMIN_USERNAME", "ADMIN_PASSWORD"],
+	},
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"invocation_logs": false,
+		},
+	},
+}

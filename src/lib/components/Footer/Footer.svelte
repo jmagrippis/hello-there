@@ -1,7 +1,8 @@
 <script lang="ts">
-	import YouTubeIcon from '$lib/icons/youtube.svg?component'
-	import GitHubIcon from './github.svg?component'
-	import DiscordIcon from './discord.svg?component'
+	import IconDiscord from '~icons/brand/discord'
+	import IconGitHub from '~icons/brand/github'
+	import IconYouTube from '~icons/brand/youtube'
+
 	import PulsingHeart from './PulsingHeart.svelte'
 </script>
 
@@ -16,27 +17,27 @@
 		href="https://www.youtube.com/@jmagrippis"
 		target="_blank"
 		rel="noopener noreferrer"
-		aria-label="YouTube"
+		aria-label="Johnny’s YouTube channel"
 		class="hover:text-emphasis-hover"
 	>
-		<YouTubeIcon title="Johnny’s YouTube channel" class="w-5" />
+		<IconYouTube class="w-5" />
 	</a>
 	<a
 		href="https://github.com/jmagrippis/hello-there"
 		target="_blank"
 		rel="noopener noreferrer"
-		aria-label="checkout the source code at the github repo"
+		aria-label="Check out the source code on GitHub"
 		class="hover:text-emphasis-hover"
 	>
-		<GitHubIcon class="w-5" />
+		<IconGitHub class="w-5" />
 	</a>
 	<a
 		href="https://discord.gg/eR5Q52Sfm3"
 		target="_blank"
 		rel="noopener noreferrer"
-		aria-label="Join Johnny's Discord community!"
+		aria-label="Join Johnny’s Discord community!"
 		class="hover:text-emphasis-hover"
 	>
-		<DiscordIcon class="w-5" />
+		<IconDiscord class="w-5" />
 	</a>
 </footer>

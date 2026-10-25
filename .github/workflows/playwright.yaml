@@ -1,31 +1,68 @@
-name: Playwright Tests
+name: Playwright
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-env:
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  REDIS_URL: ${{ secrets.REDIS_URL }}
-  REDIS_TOKEN: ${{ secrets.REDIS_TOKEN }}
+
 jobs:
-  test:
-    timeout-minutes: 60
+  sanity-check:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
         with:
-          node-version: 18
-      - name: Install dependencies
-        run: npm ci
+          node-version-file: .node-version
+          cache: true
+      - name: Build the Worker
+        run: vp build
+      - name: Code quality check (format, lint, type check)
+        run: vp check
+      - name: Type check with svelte-check
+        run: vp run check
+      - name: Run Vitest tests
+        run: vp test
+  browser-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      # test-only credentials for the local Worker
+      ADMIN_USERNAME: playwright
+      ADMIN_PASSWORD: playwright-only-password
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: .node-version
+          cache: true
+      - name: Build the Worker
+        run: vp build
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: vp exec playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v3
+        run: vp run playwright
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results
           path: test-results/
           retention-days: 30
+  deploy:
+    if: github.event_name == 'push'
+    needs: [sanity-check, browser-tests]
+    concurrency: deploy
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: .node-version
+          cache: true
+      - name: Deploy to Cloudflare
+        run: vp run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

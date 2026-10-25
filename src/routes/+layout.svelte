@@ -1,22 +1,37 @@
 <script lang="ts">
 	import '@fontsource-variable/grandstander'
 	import '@fontsource/noto-color-emoji/emoji.css'
+	import {page} from '$app/state'
+	import {ModeWatcher} from 'mode-watcher'
 
 	import '../app.css'
-	import {browser} from '$app/environment'
-	import {page} from '$app/stores'
-	import Header from '$lib/components/Header/Header.svelte'
-	import Footer from '$lib/components/Footer/Footer.svelte'
-	import {theme} from '$lib/stores/theme'
 
-	export let data
+	import Footer from '#lib/components/Footer/Footer.svelte'
+	import Header from '#lib/components/Header/Header.svelte'
+	import {
+		DEFAULT_NAME,
+		OG_IMAGE_HEIGHT,
+		OG_IMAGE_WIDTH,
+		ogImagePath,
+		SITE_DESCRIPTION,
+		SITE_NAME,
+	} from '#lib/meta'
 
-	$: title = $page.data.meta?.title ?? data.defaultMeta.title
-	$: description = $page.data.meta?.description ?? data.defaultMeta.description
-	$: image = $page.data.meta?.image ?? data.defaultMeta.image
+	import type {LayoutProps} from './$types'
 
-	$theme = data.theme
-	$: browser && (document.documentElement.dataset.theme = $theme)
+	let {children}: LayoutProps = $props()
+
+	let title = $derived(page.data.meta?.title ?? SITE_NAME)
+	let description = $derived(page.data.meta?.description ?? SITE_DESCRIPTION)
+	let ogImageUrl = $derived(
+		new URL(page.data.meta?.image ?? ogImagePath(DEFAULT_NAME), page.url.origin).href,
+	)
+
+	$effect(() => {
+		// Add data-testid now that our app is hydrated
+		// We have Playwright "wait" for this before starting any test
+		document.documentElement.dataset.testid = 'hydrated'
+	})
 </script>
 
 <svelte:head>
@@ -26,14 +41,26 @@
 	<meta property="og:title" content={title} />
 	<meta property="og:description" content={description} />
 	<meta property="og:type" content="website" />
-	<meta property="og:site_name" content="Emoji of the day" />
-	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:site_name" content={SITE_NAME} />
+	<meta property="og:url" content={page.url.href} />
+	<meta property="og:image" content={ogImageUrl} />
+	<meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+	<meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+	<meta property="og:image:alt" content={title} />
 
-	<meta property="og:image" content={image.url} />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:image:alt" content={image.alt} />
 </svelte:head>
 
+<ModeWatcher
+	track={false}
+	defaultMode="dark"
+	defaultTheme="dark"
+	disableTransitions={false}
+	darkClassNames={[]}
+/>
+
 <Header />
-<slot />
+<main class="flex grow flex-col">
+	{@render children()}
+</main>
 <Footer />

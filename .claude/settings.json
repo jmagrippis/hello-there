@@ -1,0 +1,18 @@
+{
+	"enabledPlugins": {
+		"cloudflare@cloudflare": true
+	},
+	"hooks": {
+		"PostToolUse": [
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "file=$(jq -r '.tool_input.file_path'); case \"$file\" in \"$CLAUDE_PROJECT_DIR\"/*) cd \"$CLAUDE_PROJECT_DIR\"; vp lint --fix --no-error-on-unmatched-pattern \"$file\"; vp fmt --no-error-on-unmatched-pattern \"$file\" ;; esac"
+					}
+				]
+			}
+		]
+	}
+}

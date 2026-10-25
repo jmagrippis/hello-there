@@ -1,66 +1,38 @@
 <script lang="ts">
-	import {browser} from '$app/environment'
-	import {applyAction, enhance} from '$app/forms'
-	import {page} from '$app/stores'
+	import {page} from '$app/state'
+	import {setMode, setTheme, theme} from 'mode-watcher'
+	import IconYouTube from '~icons/brand/youtube'
 
 	import ThemeToggleIcon from './ThemeToggleIcon.svelte'
-	import YouTubeIcon from '$lib/icons/youtube.svg?component'
-	import {theme, type Theme} from '$lib/stores/theme'
 
-	$: logoTag = $page.url.pathname === '/' ? 'h1' : 'div'
+	let logoTag = $derived(page.url.pathname === '/' ? 'h1' : 'div')
 
-	const deriveNextTheme = (theme: Theme): Theme => {
-		switch (theme) {
-			case 'dark':
-				return 'light'
-			case 'light':
-				return 'dark'
-			case 'auto':
-			default:
-				if (!browser) return 'auto'
-				return window.matchMedia('(prefers-color-scheme: dark)').matches
-					? 'light'
-					: 'dark'
-		}
+	const toggleTheme = () => {
+		const nextTheme = theme.current === 'dark' ? 'light' : 'dark'
+
+		setTheme(nextTheme)
+		setMode(nextTheme)
 	}
-	$: nextTheme = deriveNextTheme($theme)
 </script>
 
 <header class="relative z-10 bg-surface-2">
 	<div class="container flex items-center justify-between px-2 py-4">
-		<svelte:element this={logoTag}
-			><a href="/" class="text-2xl no-underline" aria-label="Hello there">👋</a
-			></svelte:element
-		>
+		<svelte:element this={logoTag}>
+			<a href="/" class="text-2xl no-underline" aria-label="Hello there">👋</a>
+		</svelte:element>
 		<nav class="flex items-center gap-4">
 			<a href="/about">About</a>
 			<a
 				href="https://www.youtube.com/@jmagrippis"
 				target="_blank"
 				rel="noopener noreferrer"
-				aria-label="YouTube"
+				aria-label="Johnny’s YouTube channel"
 			>
-				<YouTubeIcon
-					title="Johnny’s YouTube channel"
-					class="w-7 hover:text-emphasis-hover"
-				/>
+				<IconYouTube class="w-7 hover:text-emphasis-hover" />
 			</a>
-			<form
-				method="POST"
-				action="/theme"
-				use:enhance={async () => {
-					$theme = nextTheme
-
-					return async ({result}) => {
-						await applyAction(result)
-					}
-				}}
-			>
-				<input name="theme" value={nextTheme} hidden />
-				<button class="w-8">
-					<ThemeToggleIcon />
-				</button>
-			</form>
+			<button class="w-8" onclick={toggleTheme} aria-label="toggle light/dark theme">
+				<ThemeToggleIcon class="w-full hover:text-emphasis-hover" />
+			</button>
 		</nav>
 	</div>
 </header>
