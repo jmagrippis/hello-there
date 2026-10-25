@@ -49,3 +49,20 @@ jobs:
           name: test-results
           path: test-results/
           retention-days: 30
+  deploy:
+    if: github.event_name == 'push'
+    needs: [sanity-check, browser-tests]
+    concurrency: deploy
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: .node-version
+          cache: true
+      - name: Deploy to Cloudflare
+        run: vp run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

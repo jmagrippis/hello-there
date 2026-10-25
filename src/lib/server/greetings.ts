@@ -20,20 +20,20 @@ const keyFor = (name: string) => `${KEY_PREFIX}${name}`
 // kept in metadata, which `list()` returns without reading values
 const previewOf = (greeting: string) => Array.from(greeting).slice(0, PREVIEW_LENGTH).join('')
 
-export const getGreeting = (name: string) => env.GREETINGS.get(keyFor(name))
+export const getGreeting = (name: string) => env.KV.get(keyFor(name))
 
 export const storeGeneratedGreeting = (name: string, greeting: string) =>
 	waitUntil(
-		env.GREETINGS.put(keyFor(name), greeting, {
+		env.KV.put(keyFor(name), greeting, {
 			metadata: {createdAt: Date.now(), editedAt: null, preview: previewOf(greeting)},
 		}),
 	)
 
 export const saveEditedGreeting = async (name: string, greeting: string) => {
-	const {metadata} = await env.GREETINGS.getWithMetadata<GreetingMetadata>(keyFor(name))
+	const {metadata} = await env.KV.getWithMetadata<GreetingMetadata>(keyFor(name))
 	const editedAt = Date.now()
 
-	await env.GREETINGS.put(keyFor(name), greeting, {
+	await env.KV.put(keyFor(name), greeting, {
 		metadata: {
 			createdAt: metadata?.createdAt ?? editedAt,
 			editedAt,
@@ -42,8 +42,7 @@ export const saveEditedGreeting = async (name: string, greeting: string) => {
 	})
 }
 
-export const getRandomPool = async () =>
-	(await env.GREETINGS.get<string[]>(RANDOM_POOL_KEY, 'json')) ?? []
+export const getRandomPool = async () => (await env.KV.get<string[]>(RANDOM_POOL_KEY, 'json')) ?? []
 
 // only stored greetings may join, so a random pick never triggers a fresh, unvetted one
 export const setInRandomPool = async (name: string, included: boolean) => {
@@ -55,12 +54,12 @@ export const setInRandomPool = async (name: string, included: boolean) => {
 		pool.delete(name)
 	}
 
-	await env.GREETINGS.put(RANDOM_POOL_KEY, JSON.stringify([...pool].toSorted()))
+	await env.KV.put(RANDOM_POOL_KEY, JSON.stringify([...pool].toSorted()))
 }
 
 export const deleteGreeting = async (name: string) => {
 	await setInRandomPool(name, false)
-	await env.GREETINGS.delete(keyFor(name))
+	await env.KV.delete(keyFor(name))
 }
 
 export const listGreetings = async () => {
@@ -68,7 +67,7 @@ export const listGreetings = async () => {
 	let cursor: string | null = null
 
 	do {
-		const page: KVNamespaceListResult<GreetingMetadata> = await env.GREETINGS.list({
+		const page: KVNamespaceListResult<GreetingMetadata> = await env.KV.list({
 			prefix: KEY_PREFIX,
 			cursor,
 		})

@@ -44,7 +44,7 @@ vp run sanity
 ## Deploying
 
 ```sh
-pnpm wrangler kv namespace create hello-there-greetings --binding GREETINGS
+pnpm wrangler kv namespace create hello-there --binding KV
 pnpm wrangler secret put ANTHROPIC_API_KEY
 pnpm wrangler secret put ADMIN_USERNAME
 pnpm wrangler secret put ADMIN_PASSWORD
@@ -52,3 +52,5 @@ pnpm run deploy
 ```
 
 The first command writes the namespace id into `wrangler.jsonc`: run `vp fmt` and commit that change.
+
+After that, every push to `main` deploys from CI once the tests pass, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets.
