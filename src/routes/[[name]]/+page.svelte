@@ -20,14 +20,14 @@
 		{:else}
 			<p>Johnny is lost for words right now 😅 Give it another go in a bit!</p>
 		{/if}
-	{/await}
 
-	{#if data.hasAnotherGreeting}
-		<p class="text-xl">
-			<!-- client-side, `/random` would match `[[name]]` -->
-			<a href="/random?not={encodeURIComponent(data.name)}" data-sveltekit-reload>
-				See another greeting →
-			</a>
-		</p>
-	{/if}
+		{#if data.hasAnotherGreeting}
+			<p class="text-xl">
+				<!-- client-side, `/random` would match `[[name]]` -->
+				<a href="/random?not={encodeURIComponent(data.name)}" data-sveltekit-reload>
+					See another greeting →
+				</a>
+			</p>
+		{/if}
+	{/await}
 </div>
