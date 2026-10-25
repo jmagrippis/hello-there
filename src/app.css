@@ -42,6 +42,10 @@
 		color-scheme: dark;
 	}
 
+	/*
+		mode-watcher also sets `color-scheme` inline, but the build compiles `light-dark()` into
+		variables that only flip on stylesheet `color-scheme` declarations, so this rule is load-bearing
+	*/
 	[data-theme='light'] {
 		color-scheme: light;
 	}

@@ -1,6 +1,8 @@
 import {expect, test} from '@playwright/test'
 
-test('a visitor gets greeted, reads about the app, then greets a friend', async ({page}) => {
+const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+
+test('every page carries its own title, and each name gets its own share card', async ({page}) => {
 	await page.goto('/')
 	await expect(page.getByTestId('hydrated')).toBeVisible()
 
@@ -14,16 +16,17 @@ test('a visitor gets greeted, reads about the app, then greets a friend', async 
 	await page.getByRole('link', {name: 'Hello there'}).click()
 	await expect(page).toHaveTitle('Hello there, World 👋')
 
-	await page.goto('/Claude')
+	await page.goto(`/${encodeURIComponent('Zoë Mae')}`)
 	await expect(page.getByTestId('hydrated')).toBeVisible()
-	await expect(page).toHaveTitle('Hello there, Claude 👋')
+	await expect(page).toHaveTitle('Hello there, Zoë Mae 👋')
 
 	const ogImageUrl = await page.locator('meta[property="og:image"]').getAttribute('content')
-	expect(ogImageUrl).toMatch(/\/og\/Claude\.png$/)
+	expect(ogImageUrl).toMatch(/\/og\/Zo%C3%AB%20Mae\.png$/)
 
 	const ogImage = await page.request.get(ogImageUrl ?? '')
 	expect(ogImage.ok()).toBe(true)
 	expect(ogImage.headers()['content-type']).toBe('image/png')
+	expect([...(await ogImage.body()).subarray(0, PNG_SIGNATURE.length)]).toEqual(PNG_SIGNATURE)
 })
 
 test('naughty names get turned away before anyone asks Claude', async ({page}) => {

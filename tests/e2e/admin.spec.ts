@@ -1,10 +1,19 @@
 import {expect, test} from '@playwright/test'
 
-test('the admin area asks for a password', async ({request}) => {
-	const response = await request.get('/admin')
+test('every admin page and action asks for a password', async ({request, baseURL}) => {
+	const sameOrigin = {origin: new URL(baseURL ?? '').origin}
 
-	expect(response.status()).toBe(401)
-	expect(response.headers()['www-authenticate']).toMatch(/^Basic /)
+	const responses = await Promise.all([
+		request.get('/admin'),
+		request.get('/admin/Zarina'),
+		request.post('/admin/Zarina?/delete', {form: {}, headers: sameOrigin}),
+		request.post('/admin?/pool', {form: {name: 'Zarina', include: 'true'}, headers: sameOrigin}),
+	])
+
+	for (const response of responses) {
+		expect(response.status()).toBe(401)
+		expect(response.headers()['www-authenticate']).toMatch(/^Basic /)
+	}
 })
 
 test.describe('as the admin', () => {
@@ -18,7 +27,8 @@ test.describe('as the admin', () => {
 	test('handcrafts a greeting, features it in the random pool, then hands the name back to Claude', async ({
 		page,
 	}) => {
-		const name = `Pw${Date.now().toString(36).slice(-6)}`
+		const name = `José ${Date.now().toString(36).slice(-6)}`
+		const path = `/${encodeURIComponent(name)}`
 
 		await page.goto('/admin')
 		await expect(page.getByTestId('hydrated')).toBeVisible()
@@ -26,8 +36,11 @@ test.describe('as the admin', () => {
 		await page.getByRole('searchbox', {name: 'Name'}).fill(name)
 		await page.getByRole('button', {name: 'Search'}).click()
 		await page.getByRole('link', {name: `Write a greeting for “${name}”`}).click()
-
 		await expect(page.getByRole('heading', {level: 1, name: `Greeting for ${name}`})).toBeVisible()
+
+		await page.getByRole('button', {name: 'Save'}).click()
+		await expect(page.getByRole('alert')).toHaveText('A greeting can’t be empty.')
+
 		await page
 			.getByRole('textbox', {name: /Greeting/})
 			.fill(`Hello there, **${name}**!\n\nWhat a **play-maker** you are.`)
@@ -36,9 +49,7 @@ test.describe('as the admin', () => {
 		await expect(page.getByRole('status')).toHaveText('Saved ✓')
 
 		await page.getByRole('link', {name: '← All greetings'}).click()
-		await page.getByRole('combobox', {name: 'Sort by'}).selectOption('Recently edited')
-		await page.getByRole('button', {name: 'Search'}).click()
-		await expect(page.getByRole('row').nth(1)).toContainText(name)
+		await expect(page.getByRole('link', {name, exact: true})).toBeVisible()
 
 		const poolToggle = page.getByRole('button', {name: `Show ${name} in random greetings`})
 		await expect(poolToggle).toHaveAttribute('aria-pressed', 'false')
@@ -51,10 +62,11 @@ test.describe('as the admin', () => {
 		await expect(page).toHaveURL((url) => !['/', '/random'].includes(url.pathname))
 		await expect(page).toHaveTitle(/^Hello there, .+ 👋$/)
 
-		await page.goto(`/${name}`)
+		await page.goto(path)
 		await expect(page.getByText('play-maker', {exact: true})).toBeVisible()
 
-		await page.goto(`/admin/${name}`)
+		await page.goto(`/admin${path}`)
+		await expect(page.getByTestId('hydrated')).toBeVisible()
 		await page.getByRole('button', {name: 'Delete'}).click()
 		await expect(page).toHaveURL(/\/admin$/)
 		await expect(page.getByRole('link', {name, exact: true})).toHaveCount(0)
@@ -63,7 +75,7 @@ test.describe('as the admin', () => {
 			Array.from({length: 20}, () => page.request.get('/random?not=World', {maxRedirects: 0})),
 		)
 		for (const redirect of randomRedirects) {
-			expect(redirect.headers()['location']).not.toBe(`/${name}`)
+			expect(redirect.headers()['location']).not.toBe(path)
 		}
 	})
 })
