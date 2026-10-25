@@ -1,6 +1,6 @@
 # Hello There
 
-![QA](https://github.com/jmagrippis/hello-there/actions/workflows/qa.yaml/badge.svg)
+![Playwright](https://github.com/jmagrippis/hello-there/actions/workflows/playwright.yaml/badge.svg)
 
 Greet your friends using generative AI!
 
@@ -8,7 +8,7 @@ Visit `/<their name>` and Johnny greets them with a pun on their name. The first
 
 ## Notable Tech Featured
 
-- [SvelteKit 3](https://svelte.dev), deployed with [`adapter-cloudflare`](https://svelte.dev/docs/kit/adapter-cloudflare)
+- [SvelteKit](https://svelte.dev)
 - [Cloudflare Workers](https://github.com/cloudflare/workers-sdk#readme), with a [KV namespace](https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces) storing greetings
 - [Claude](https://platform.claude.com/docs/en/about-claude/models/overview) via the [Anthropic TypeScript SDK](https://github.com/anthropics/anthropic-sdk-typescript#readme)
 - [Tailwind CSS v4](https://tailwindcss.com)

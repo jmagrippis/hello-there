@@ -7,10 +7,10 @@
 	"recommendations": [
 		"bradlc.vscode-tailwindcss",
 		"codezombiech.gitignore",
-		"GitHub.copilot",
 		"github.vscode-github-actions",
 		"mikestead.dotenv",
 		"ms-playwright.playwright",
+		"oxc.oxc-vscode",
 		"svelte.svelte-vscode",
 		"unifiedjs.vscode-mdx",
 		"wix.vscode-import-cost",
